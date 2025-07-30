@@ -8,6 +8,7 @@ export const sampleMembers = [
       yearJoined: 2023,
       contractStatus: "Active",
       mobilePhone1: "0782113600",
+      cluster: 1,
       emailAddress: "vongai@example.com"
     },
     {
@@ -19,6 +20,7 @@ export const sampleMembers = [
       yearJoined: 2024,
       contractStatus: "Active",
       mobilePhone1: "0771234567",
+      cluster: 4,
       emailAddress: "dave@example.com"
     },
     {
@@ -30,6 +32,7 @@ export const sampleMembers = [
       yearJoined: 2022,
       contractStatus: "Inactive",
       mobilePhone1: "0783456789",
+      cluster: 5,
       emailAddress: "edward@example.com"
     },
     {
@@ -41,6 +44,7 @@ export const sampleMembers = [
       yearJoined: 2022,
       contractStatus: "Active",
       mobilePhone1: "0774567890",
+      cluster: 3,
       emailAddress: "sibo@example.com"
     },
     {
@@ -52,6 +56,7 @@ export const sampleMembers = [
       yearJoined: 2025,
       contractStatus: "Active",
       mobilePhone1: "0765678901",
+      cluster: 6,
       emailAddress: "tony@example.com"
     }
   ]

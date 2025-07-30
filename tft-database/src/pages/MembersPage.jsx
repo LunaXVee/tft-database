@@ -63,7 +63,8 @@ function MembersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
+                  <TableHead  >Name</TableHead>
+                  <TableHead>Cluster</TableHead>
                   <TableHead>Province</TableHead>
                   <TableHead>Farm Type</TableHead>
                   <TableHead>Year Joined</TableHead>
@@ -75,11 +76,17 @@ function MembersPage() {
                 {filteredMembers.map((member) => (
                   <TableRow key={member.id}>
                     <TableCell>
-                      <div>
-                        <p className="font-medium">{member.firstName} {member.lastName}</p>
+                    <div>
+                        <button 
+                        onClick={() => navigate(`/member/${member.id}`)}
+                        className="font-medium text-green-600 hover:text-green-800 hover:underline text-left"
+                        >
+                        {member.firstName} {member.lastName}
+                        </button>
                         <p className="text-sm text-gray-500">{member.emailAddress}</p>
-                      </div>
+                    </div>
                     </TableCell>
+                    <TableCell>{member.cluster}</TableCell>
                     <TableCell>{member.province}</TableCell>
                     <TableCell>{member.farmType}</TableCell>
                     <TableCell>{member.yearJoined}</TableCell>

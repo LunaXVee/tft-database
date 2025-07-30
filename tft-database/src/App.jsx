@@ -3,6 +3,8 @@ import HomePage from "./pages/HomePage"
 import AddMemberPage from "./pages/AddMemberPage"
 import MembersPage from "./pages/MembersPage"
 import ExportPage from "./pages/ExportPage"
+import MemberDetailsPage from "./pages/MemberDetailsPage"  // Add this import
+
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
         <Route path="/add-member" element={<AddMemberPage />} />
         <Route path="/members" element={<MembersPage />} />
         <Route path="/export" element={<ExportPage />} />
+        <Route path="/member/:id" element={<MemberDetailsPage />} />  {/* Add this route */}
+
       </Routes>
     </BrowserRouter>
   )
