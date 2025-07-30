@@ -15,15 +15,17 @@ export const memberSchema = z.object({
   emailAddress: z.string().email("Invalid email").optional().or(z.literal("")),
   
   // Location Information - MAKE THESE OPTIONAL FOR NOW
-  province: z.string().optional(),
-  constituency: z.string().optional(),
-  district: z.string().optional(),
+  province: z.string().min(1, "Province is required"),
+  constituency: z.string().min(1, "Constituency is required"),
+  district: z.string().min(1, "District is required"),
   ward: z.string().optional(),
   village: z.string().optional(),
-  cluster: z.string().optional(),
+  cluster: z.string().min(1, "Cluster number is required"),
   
   // Farm Information - MAKE THESE OPTIONAL FOR NOW
-  farmType: z.string().optional(),
+  // Farm Information - MAKE THESE REQUIRED NOW
+  farmType: z.enum(["communal", "a1", "a2", "small_scale_resettlement", "commercial"], 
+    "Please select farm type"),
   farmName: z.string().optional(),
-  farmSize: z.string().optional(),
+  farmSize: z.string().min(1, "Farm size is required"),
 })

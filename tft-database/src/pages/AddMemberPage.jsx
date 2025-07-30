@@ -23,12 +23,20 @@ function AddMemberPage() {
       mobilePhone1: "",
       mobilePhone2: "",
       emailAddress: "",
+       // Add location fields
+
       province: "",
       constituency: "",
       district: "",
       ward: "",
       village: "",
       cluster: "",
+
+      // Add farm fields
+  farmType: "",
+  farmName: "",
+  farmSize: "",
+
       // We'll add more as we go
 
     }
@@ -288,14 +296,86 @@ console.log("Form values:", form.watch())
 
     {/* Cluster */}
     <div>
-      <label className="block text-sm font-medium mb-1">Cluster</label>
-      <Input 
+      <label className="block text-sm font-medium mb-1">Cluster *</label>
+      
+
+    <select 
         {...form.register("cluster")}
-        placeholder="Enter cluster" 
-      />
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+      >
+        <option value="">Select Your Cluster Number</option>
+        <option value="harare">1</option>
+        <option value="bulawayo">2</option>
+        <option value="manicaland">3</option>
+        <option value="mashonaland-central">4</option>
+        <option value="mashonaland-east">5</option>
+        <option value="mashonaland-west">6</option>
+        <option value="masvingo">7</option>
+        <option value="matabeleland-north">8</option>
+        <option value="matabeleland-south">9</option>
+        <option value="midlands">10</option>
+      </select>
+
       {form.formState.errors.cluster && (
         <p className="text-red-500 text-sm mt-1">
           {form.formState.errors.cluster.message}
+        </p>
+      )}
+    </div>
+  </div>
+</TabsContent>
+
+<TabsContent value="farm" className="space-y-4">
+  <h3 className="text-lg font-medium">Farm Information</h3>
+  
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {/* Farm Type */}
+    <div>
+      <label className="block text-sm font-medium mb-1">Farm Type *</label>
+      <select 
+        {...form.register("farmType")}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+      >
+        <option value="">Select farm type</option>
+        <option value="communal">Communal</option>
+        <option value="a1">A1</option>
+        <option value="a2">A2</option>
+        <option value="small_scale_resettlement">Small Scale Resettlement</option>
+        <option value="commercial">Commercial</option>
+      </select>
+      {form.formState.errors.farmType && (
+        <p className="text-red-500 text-sm mt-1">
+          {form.formState.errors.farmType.message}
+        </p>
+      )}
+    </div>
+
+    {/* Farm Name */}
+    <div>
+      <label className="block text-sm font-medium mb-1">Farm Name</label>
+      <Input 
+        {...form.register("farmName")}
+        placeholder="Enter farm name" 
+      />
+      {form.formState.errors.farmName && (
+        <p className="text-red-500 text-sm mt-1">
+          {form.formState.errors.farmName.message}
+        </p>
+      )}
+    </div>
+
+    {/* Farm Size */}
+    <div>
+      <label className="block text-sm font-medium mb-1">Farm Size (hectares) *</label>
+      <Input 
+        type="number"
+        step="0.1"
+        {...form.register("farmSize")}
+        placeholder="Enter farm size in hectares" 
+      />
+      {form.formState.errors.farmSize && (
+        <p className="text-red-500 text-sm mt-1">
+          {form.formState.errors.farmSize.message}
         </p>
       )}
     </div>
