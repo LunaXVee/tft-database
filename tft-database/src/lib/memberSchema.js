@@ -14,17 +14,16 @@ export const memberSchema = z.object({
   mobilePhone2: z.string().optional(),
   emailAddress: z.string().email("Invalid email").optional().or(z.literal("")),
   
-  // Location Information
-  province: z.string().min(1, "Province is required"),
-  constituency: z.string().min(1, "Constituency is required"),
-  district: z.string().min(1, "District is required"),
+  // Location Information - MAKE THESE OPTIONAL FOR NOW
+  province: z.string().optional(),
+  constituency: z.string().optional(),
+  district: z.string().optional(),
   ward: z.string().optional(),
   village: z.string().optional(),
   cluster: z.string().optional(),
   
-  // Farm Information
-  farmType: z.enum(["communal", "a1", "a2", "small_scale_resettlement", "commercial"], 
-    "Please select farm type"),
+  // Farm Information - MAKE THESE OPTIONAL FOR NOW
+  farmType: z.string().optional(),
   farmName: z.string().optional(),
-  farmSize: z.string().min(1, "Farm size is required"),
+  farmSize: z.string().optional(),
 })
