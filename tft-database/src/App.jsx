@@ -2,33 +2,27 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { Button } from "@/components/ui/button"
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold text-green-700 mb-8">
+          Tobacco Farmers Trust Database
+        </h1>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <p className="text-gray-600 mb-4">
+            Welcome to the TFT member management system
+          </p>
+          <div className="space-x-4">
+            <Button>Add New Member</Button>
+            <Button variant="outline">View Members</Button>
+            <Button variant="secondary">Export Data</Button>
+          </div>
+        </div>
       </div>
-      <h1>Tobacco Farmers Trust Database</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
