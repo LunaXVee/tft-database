@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { memberSchema } from "@/lib/memberSchema"
+import { supabase } from "@/lib/supabase"
 
 function AddMemberPage() {
   const navigate = useNavigate()
@@ -46,10 +47,33 @@ function AddMemberPage() {
 console.log("Form errors:", form.formState.errors)
 console.log("Form values:", form.watch())
 
-  const onSubmit = (data) => {
+const onSubmit = async (data) => {
+    console.clear()
+    console.log("=== FORM SUBMISSION SUCCESS ===")
+    console.log("Form data:", data)
     
-    console.log("=== FORM SUBMISSION SUCCESS ===", data)
-    alert("🎉 Member added successfully! Check console for data.")
+    // Test database connection
+    try {
+      console.log("🔗 Testing database connection...")
+      
+      const { data: testData, error } = await supabase
+        .from('members')
+        .select('count', { count: 'exact' })
+      
+      if (error) {
+        console.error("❌ Database connection failed:", error)
+        alert("Database connection failed. Check console for details.")
+        return
+      }
+      
+      console.log("✅ Database connection successful!")
+      console.log("Current member count:", testData)
+      alert("🎉 Form validated and database connected! Ready to save real data.")
+      
+    } catch (err) {
+      console.error("❌ Connection error:", err)
+      alert("Connection error. Check console for details.")
+    }
   }
 
   return (
