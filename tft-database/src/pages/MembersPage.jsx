@@ -46,6 +46,43 @@ function MembersPage() {
       setLoading(false)
     }
   }
+
+  // Delete member function (moved outside of fetchMembers)
+  const handleDeleteMember = async (memberId, memberName) => {
+    // Show confirmation dialog
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete ${memberName}? This action cannot be undone.`
+    )
+    
+    if (!isConfirmed) {
+      return // User cancelled
+    }
+    
+    try {
+      console.log("🗑️ Deleting member:", memberId)
+      
+      const { error } = await supabase
+        .from('members')
+        .delete()
+        .eq('id', memberId)
+      
+      if (error) {
+        console.error("❌ Delete failed:", error)
+        alert("Failed to delete member. Check console for details.")
+        return
+      }
+      
+      console.log("✅ Member deleted successfully!")
+      alert("Member deleted successfully!")
+      
+      // Refresh the members list
+      fetchMembers()
+      
+    } catch (err) {
+      console.error("❌ Delete error:", err)
+      alert("Delete error. Check console for details.")
+    }
+  }
   
   // Filter members based on search term
   const filteredMembers = members.filter(member =>
@@ -149,14 +186,19 @@ function MembersPage() {
                       </TableCell>
                       <TableCell>
                         <div className="space-x-2">
-                        <Button 
+                          <Button 
                             variant="outline" 
                             size="sm"
                             onClick={() => navigate(`/member/${member.id}/edit`)}
                           >
                             Edit
                           </Button>
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleDeleteMember(member.id, `${member.first_name} ${member.last_name}`)}
+                            className="text-red-600 hover:text-red-800"
+                          >
                             Delete
                           </Button>
                         </div>
