@@ -49,30 +49,56 @@ console.log("Form values:", form.watch())
 
 const onSubmit = async (data) => {
     console.clear()
-    console.log("=== FORM SUBMISSION SUCCESS ===")
+    console.log("=== SAVING MEMBER TO DATABASE ===")
     console.log("Form data:", data)
     
-    // Test database connection
     try {
-      console.log("🔗 Testing database connection...")
+      console.log("💾 Saving member to database...")
       
-      const { data: testData, error } = await supabase
+      // Insert the member data into the database
+      const { data: savedMember, error } = await supabase
         .from('members')
-        .select('count', { count: 'exact' })
+        .insert([
+          {
+            first_name: data.firstName,
+            middle_name: data.middleName || null,
+            last_name: data.lastName,
+            id_number: data.idNumber,
+            date_of_birth: data.dateOfBirth,
+            gender: data.gender,
+            mobile_phone_1: data.mobilePhone1,
+            mobile_phone_2: data.mobilePhone2 || null,
+            email_address: data.emailAddress || null,
+            province: data.province,
+            constituency: data.constituency,
+            district: data.district,
+            ward: data.ward || null,
+            village: data.village || null,
+            cluster: data.cluster || null,
+            farm_type: data.farmType,
+            farm_name: data.farmName || null,
+            farm_size: data.farmSize,
+            // contract_status and year_joined will use their default values
+          }
+        ])
+        .select()
       
       if (error) {
-        console.error("❌ Database connection failed:", error)
-        alert("Database connection failed. Check console for details.")
+        console.error("❌ Database save failed:", error)
+        alert("Failed to save member. Check console for details.")
         return
       }
       
-      console.log("✅ Database connection successful!")
-      console.log("Current member count:", testData)
-      alert("🎉 Form validated and database connected! Ready to save real data.")
+      console.log("✅ Member saved successfully!")
+      console.log("Saved member:", savedMember)
+      alert("🎉 Member registered successfully! Check the Members Directory to see them.")
+      
+      // Navigate to members directory to see the new member
+      navigate("/members")
       
     } catch (err) {
-      console.error("❌ Connection error:", err)
-      alert("Connection error. Check console for details.")
+      console.error("❌ Save error:", err)
+      alert("Save error. Check console for details.")
     }
   }
 
