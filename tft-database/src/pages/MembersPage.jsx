@@ -149,7 +149,11 @@ function MembersPage() {
                       </TableCell>
                       <TableCell>
                         <div className="space-x-2">
-                          <Button variant="outline" size="sm">
+                        <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => navigate(`/member/${member.id}/edit`)}
+                          >
                             Edit
                           </Button>
                           <Button variant="outline" size="sm">
