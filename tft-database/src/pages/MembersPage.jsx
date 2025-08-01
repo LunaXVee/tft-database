@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,18 +10,61 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { sampleMembers } from "@/data/sampleMembers"
+import { supabase } from "@/lib/supabase"
 
 function MembersPage() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("")
+  const [members, setMembers] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch members from database
+  useEffect(() => {
+    fetchMembers()
+  }, [])
+
+  const fetchMembers = async () => {
+    try {
+      console.log("📥 Fetching members from database...")
+      
+      const { data, error } = await supabase
+        .from('members')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error("❌ Error fetching members:", error)
+        return
+      }
+
+      console.log("✅ Members fetched successfully:", data)
+      setMembers(data || [])
+      
+    } catch (err) {
+      console.error("❌ Fetch error:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
   
   // Filter members based on search term
-  const filteredMembers = sampleMembers.filter(member =>
-    member.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.province.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMembers = members.filter(member =>
+    member.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.province?.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-green-700">Loading members...</h2>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -38,7 +81,7 @@ function MembersPage() {
             Members Directory
           </h1>
           <p className="text-gray-600 mt-2">
-            Manage TFT farmer members
+            Manage tobacco farmer members
           </p>
         </div>
         
@@ -63,8 +106,7 @@ function MembersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead  >Name</TableHead>
-                  <TableHead>Cluster</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Province</TableHead>
                   <TableHead>Farm Type</TableHead>
                   <TableHead>Year Joined</TableHead>
@@ -73,50 +115,57 @@ function MembersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredMembers.map((member) => (
-                  <TableRow key={member.id}>
-                    <TableCell>
-                    <div>
-                        <button 
-                        onClick={() => navigate(`/member/${member.id}`)}
-                        className="font-medium text-green-600 hover:text-green-800 hover:underline text-left"
-                        >
-                        {member.firstName} {member.lastName}
-                        </button>
-                        <p className="text-sm text-gray-500">{member.emailAddress}</p>
-                    </div>
-                    </TableCell>
-                    <TableCell>{member.cluster}</TableCell>
-                    <TableCell>{member.province}</TableCell>
-                    <TableCell>{member.farmType}</TableCell>
-                    <TableCell>{member.yearJoined}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        member.contractStatus === 'Active' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {member.contractStatus}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-x-2">
-                        <Button variant="outline" size="sm">
-                          Edit
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Delete
-                        </Button>
-                      </div>
+                {filteredMembers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8">
+                      {searchTerm ? "No members found matching your search." : "No members registered yet."}
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  filteredMembers.map((member) => (
+                    <TableRow key={member.id}>
+                      <TableCell>
+                        <div>
+                          <button 
+                            onClick={() => navigate(`/member/${member.id}`)}
+                            className="font-medium text-green-600 hover:text-green-800 hover:underline text-left"
+                          >
+                            {member.first_name} {member.last_name}
+                          </button>
+                          <p className="text-sm text-gray-500">{member.email_address || 'No email'}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{member.province}</TableCell>
+                      <TableCell className="capitalize">{member.farm_type?.replace('_', ' ')}</TableCell>
+                      <TableCell>{member.year_joined}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          member.contract_status === 'Active' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {member.contract_status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-x-2">
+                          <Button variant="outline" size="sm">
+                            Edit
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            Delete
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
           
           <div className="mt-4 text-sm text-gray-500">
-            Showing {filteredMembers.length} of {sampleMembers.length} members
+            Showing {filteredMembers.length} of {members.length} members
           </div>
         </div>
       </div>
