@@ -66,3 +66,61 @@ input[data-slot="input"] {
   background-color: #f1f5f9 !important;
   color: #334155 !important;
 }
+
+
+/* Mobile responsive utilities */
+@media (max-width: 640px) {
+  /* Hide non-essential text on mobile */
+  .mobile-hide {
+    display: none;
+  }
+  
+  /* Smaller padding on mobile */
+  .mobile-compact {
+    padding: 0.5rem;
+  }
+  
+  /* Stack buttons vertically on mobile */
+  .mobile-stack {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Smaller text on mobile */
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+  
+  /* Horizontal scroll for tables */
+  .mobile-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Full width cards on mobile */
+  .mobile-full {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+/* Tablet responsive */
+@media (max-width: 1024px) {
+  /* Adjust grid layouts for tablets */
+  .tablet-stack {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 768px) {
+  button, [role="button"] {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+  
+  input, select, textarea {
+    min-height: 44px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}

@@ -106,33 +106,34 @@ function MembersPage() {
   const MembersContent = () => (
     <div className="space-y-6">
       {/* Action Bar */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          {/* Search */}
-          <div className="flex-1 max-w-md">
-            <Input
-              placeholder="Search members by name or province..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
-          </div>
+      <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md">
+  <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 gap-4">
+    {/* Search */}
+    <div className="flex-1 max-w-full lg:max-w-md">
+      <Input
+        placeholder="Search members..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full"
+      />
+    </div>
           
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3">
-            <Button 
-              onClick={() => navigate(isDashboardMode ? '/dashboard/add-member' : '/add-member')}
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              ➕ Add New Member
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => navigate(isDashboardMode ? '/dashboard/export' : '/export')}
-              className="border-blue-500 text-blue-600 hover:bg-blue-50"
-            >
-              📄 Export Data
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+      <Button 
+        onClick={() => navigate(isDashboardMode ? '/dashboard/add-member' : '/add-member')}
+        className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"
+      >
+        <span className="lg:hidden">➕ Add Member</span>
+        <span className="hidden lg:inline">➕ Add New Member</span>
+      </Button>
+      <Button 
+        variant="outline"
+        onClick={() => navigate(isDashboardMode ? '/dashboard/export' : '/export')}
+        className="border-blue-500 text-blue-600 hover:bg-blue-50 w-full sm:w-auto"
+      >
+        📄 Export Data
+      </Button>
           </div>
         </div>
         
@@ -163,13 +164,13 @@ function MembersPage() {
 
       {/* Members Table */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-800">Member Directory</h3>
-          <p className="text-gray-600 mt-1">Manage and view all registered farmers</p>
+        <div className="p-4 lg:p-6 border-b border-gray-200">
+          <h3 className="text-base lg:text-lg font-semibold text-gray-800">Member Directory</h3>
+          <p className="text-gray-600 mt-1 text-sm lg:text-base">Manage and view all registered farmers</p>
         </div>
         
-        <div className="overflow-x-auto">
-          <Table>
+        <div className="overflow-x-auto min-w-full">
+          <Table className="min-w-[800px]"> {/* Ensure minimum width for mobile scroll */}
             <TableHeader>
             <TableRow className="bg-gray-100 border-b-2 border-gray-200">
             <TableHead className="font-semibold">Member Details</TableHead>
