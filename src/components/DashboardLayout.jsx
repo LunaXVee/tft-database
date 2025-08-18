@@ -94,9 +94,7 @@ function DashboardLayout({ children }) {
               <h2 className="text-2xl font-semibold text-gray-800">
                 {navigationItems.find(item => isActiveRoute(item.path))?.label || 'Dashboard'}
               </h2>
-              <p className="text-gray-600 mt-1">
-                Manage your farm members
-              </p>
+           
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500">

@@ -71,7 +71,7 @@ function AddMemberPage() {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-800">Member Registration</h3>
-            <p className="text-gray-600 mt-1">Add a new tobacco farmer to the database</p>
+            <p className="text-gray-600 mt-1">Add a new  farmer to the database</p>
           </div>
           <div className="text-3xl">👤</div>
         </div>

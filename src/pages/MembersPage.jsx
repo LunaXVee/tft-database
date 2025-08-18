@@ -165,7 +165,7 @@ function MembersPage() {
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-800">Member Directory</h3>
-          <p className="text-gray-600 mt-1">Manage and view all registered tobacco farmers</p>
+          <p className="text-gray-600 mt-1">Manage and view all registered farmers</p>
         </div>
         
         <div className="overflow-x-auto">
