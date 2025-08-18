@@ -24,3 +24,18 @@ body {
   background-color: rgb(255 255 255);
   color: rgb(15 23 42);
 }
+
+/* Add this to your index.css */
+[data-slot="table-head"] {
+  color: #111827 !important;
+  background-color: #f3f4f6 !important;
+  font-weight: 700 !important;
+}
+
+/* Or target the table header more specifically */
+thead [data-slot="table-head"] {
+  color: #111827 !important;
+  background-color: #f3f4f6 !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid #d1d5db !important;
+}

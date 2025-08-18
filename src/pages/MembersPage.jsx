@@ -171,8 +171,8 @@ function MembersPage() {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50">
-                <TableHead className="font-semibold">Member Details</TableHead>
+            <TableRow className="bg-gray-100 border-b-2 border-gray-200">
+            <TableHead className="font-semibold">Member Details</TableHead>
                 <TableHead className="font-semibold">Location</TableHead>
                 <TableHead className="font-semibold">Farm Info</TableHead>
                 <TableHead className="font-semibold">Status</TableHead>
