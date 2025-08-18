@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -11,12 +11,17 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { supabase } from "@/lib/supabase"
+import DashboardLayout from "@/components/DashboardLayout"
 
 function MembersPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchTerm, setSearchTerm] = useState("")
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
+
+  // Check if we're in dashboard mode
+  const isDashboardMode = location.pathname.startsWith('/dashboard')
 
   // Fetch members from database
   useEffect(() => {
@@ -47,15 +52,14 @@ function MembersPage() {
     }
   }
 
-  // Delete member function (moved outside of fetchMembers)
+  // Delete member function
   const handleDeleteMember = async (memberId, memberName) => {
-    // Show confirmation dialog
     const isConfirmed = window.confirm(
       `Are you sure you want to delete ${memberName}? This action cannot be undone.`
     )
     
     if (!isConfirmed) {
-      return // User cancelled
+      return
     }
     
     try {
@@ -75,7 +79,6 @@ function MembersPage() {
       console.log("✅ Member deleted successfully!")
       alert("Member deleted successfully!")
       
-      // Refresh the members list
       fetchMembers()
       
     } catch (err) {
@@ -91,18 +94,232 @@ function MembersPage() {
     member.province?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-6xl mx-auto">
+  // Loading component
+  const LoadingState = () => (
+    <div className="text-center py-12">
+      <h2 className="text-2xl font-bold text-green-700">Loading members...</h2>
+      <p className="text-gray-600 mt-2">Fetching member data from database...</p>
+    </div>
+  )
+
+  // Members content component
+  const MembersContent = () => (
+    <div className="space-y-6">
+      {/* Action Bar */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          {/* Search */}
+          <div className="flex-1 max-w-md">
+            <Input
+              placeholder="Search members by name or province..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full"
+            />
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-3">
+            <Button 
+              onClick={() => navigate(isDashboardMode ? '/dashboard/add-member' : '/add-member')}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              ➕ Add New Member
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => navigate(isDashboardMode ? '/dashboard/export' : '/export')}
+              className="border-blue-500 text-blue-600 hover:bg-blue-50"
+            >
+              📄 Export Data
+            </Button>
+          </div>
+        </div>
+        
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-green-700">Loading members...</h2>
+            <div className="text-2xl font-bold text-gray-800">{members.length}</div>
+            <div className="text-sm text-gray-600">Total Members</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-600">
+              {members.filter(m => m.contract_status === 'Active').length}
+            </div>
+            <div className="text-sm text-gray-600">Active Contracts</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-600">{filteredMembers.length}</div>
+            <div className="text-sm text-gray-600">Filtered Results</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-600">
+              {new Set(members.map(m => m.province)).size}
+            </div>
+            <div className="text-sm text-gray-600">Provinces</div>
           </div>
         </div>
       </div>
+
+      {/* Members Table */}
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-800">Member Directory</h3>
+          <p className="text-gray-600 mt-1">Manage and view all registered tobacco farmers</p>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead className="font-semibold">Member Details</TableHead>
+                <TableHead className="font-semibold">Location</TableHead>
+                <TableHead className="font-semibold">Farm Info</TableHead>
+                <TableHead className="font-semibold">Status</TableHead>
+                <TableHead className="font-semibold">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredMembers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-12">
+                    <div className="text-gray-500">
+                      {searchTerm ? (
+                        <div>
+                          <div className="text-lg mb-2">🔍 No matches found</div>
+                          <div>No members found matching "{searchTerm}"</div>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => setSearchTerm("")}
+                            className="mt-3"
+                          >
+                            Clear Search
+                          </Button>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="text-lg mb-2">📋 No members yet</div>
+                          <div>Start by adding your first tobacco farmer</div>
+                          <Button 
+                            onClick={() => navigate(isDashboardMode ? '/dashboard/add-member' : '/add-member')}
+                            className="mt-3"
+                          >
+                            Add First Member
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredMembers.map((member) => (
+                  <TableRow key={member.id} className="hover:bg-gray-50">
+                    <TableCell>
+                      <div className="space-y-1">
+                        <button 
+                          onClick={() => navigate(`/member/${member.id}`)}
+                          className="font-medium text-green-600 hover:text-green-800 hover:underline text-left"
+                        >
+                          {member.first_name} {member.last_name}
+                        </button>
+                        <div className="text-sm text-gray-500">
+                          📱 {member.mobile_phone_1}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {member.email_address ? `📧 ${member.email_address}` : '📧 No email'}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="font-medium capitalize">{member.province}</div>
+                        <div className="text-sm text-gray-500">{member.district}</div>
+                        {member.cluster && (
+                          <div className="text-xs bg-gray-100 px-2 py-1 rounded">
+                            Cluster {member.cluster}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="font-medium capitalize">
+                          {member.farm_type?.replace('_', ' ')}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {member.farm_size ? `${member.farm_size} hectares` : 'Size not specified'}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Since {member.year_joined}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        member.contract_status === 'Active' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {member.contract_status}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate(`/member/${member.id}/edit`)}
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                        >
+                          ✏️ Edit
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleDeleteMember(member.id, `${member.first_name} ${member.last_name}`)}
+                          className="text-red-600 border-red-200 hover:bg-red-50"
+                        >
+                          🗑️ Delete
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        
+        {/* Table Footer */}
+        {filteredMembers.length > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div className="flex items-center justify-between text-sm text-gray-600">
+              <div>
+                Showing {filteredMembers.length} of {members.length} members
+                {searchTerm && ` (filtered by "${searchTerm}")`}
+              </div>
+              <div className="flex items-center gap-4">
+                <span>🚜 Total Farm Area: {
+                  members.reduce((sum, m) => sum + (parseFloat(m.farm_size) || 0), 0).toFixed(1)
+                } hectares</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+
+  // Render different layouts based on dashboard mode
+  if (isDashboardMode) {
+    return (
+      <DashboardLayout>
+        {loading ? <LoadingState /> : <MembersContent />}
+      </DashboardLayout>
     )
   }
 
+  // Legacy standalone page (for backward compatibility)
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
@@ -122,98 +339,7 @@ function MembersPage() {
           </p>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md p-6">
-          {/* Search and Add Member Header */}
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex-1 max-w-sm">
-              <Input
-                placeholder="Search members..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-              />
-            </div>
-            <Button onClick={() => navigate('/add-member')}>
-              Add New Member
-            </Button>
-          </div>
-
-          {/* Members Table */}
-          <div className="border rounded-md">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Province</TableHead>
-                  <TableHead>Farm Type</TableHead>
-                  <TableHead>Year Joined</TableHead>
-                  <TableHead>Contract Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMembers.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
-                      {searchTerm ? "No members found matching your search." : "No members registered yet."}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredMembers.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell>
-                        <div>
-                          <button 
-                            onClick={() => navigate(`/member/${member.id}`)}
-                            className="font-medium text-green-600 hover:text-green-800 hover:underline text-left"
-                          >
-                            {member.first_name} {member.last_name}
-                          </button>
-                          <p className="text-sm text-gray-500">{member.email_address || 'No email'}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>{member.province}</TableCell>
-                      <TableCell className="capitalize">{member.farm_type?.replace('_', ' ')}</TableCell>
-                      <TableCell>{member.year_joined}</TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          member.contract_status === 'Active' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {member.contract_status}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => navigate(`/member/${member.id}/edit`)}
-                          >
-                            Edit
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleDeleteMember(member.id, `${member.first_name} ${member.last_name}`)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            Delete
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          
-          <div className="mt-4 text-sm text-gray-500">
-            Showing {filteredMembers.length} of {members.length} members
-          </div>
-        </div>
+        {loading ? <LoadingState /> : <MembersContent />}
       </div>
     </div>
   )

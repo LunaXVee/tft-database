@@ -13,7 +13,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<DashboardPage />} />           {/* Dashboard is now home */}
+        <Route path="/home" element={<HomePage />} />            {/* Old home moved here */}
+
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/dashboard/members" element={<MembersPage />} />
         <Route path="/dashboard/add-member" element={<AddMemberPage />} />

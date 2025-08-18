@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { supabase } from "@/lib/supabase"
+import DashboardLayout from "@/components/DashboardLayout"
 
 function ExportPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
@@ -40,6 +42,9 @@ function ExportPage() {
     contractStatus: true,
     createdAt: false
   })
+
+  // Check if we're in dashboard mode
+  const isDashboardMode = location.pathname.startsWith('/dashboard')
 
   // Available fields with friendly names
   const fieldDefinitions = {
@@ -203,7 +208,6 @@ function ExportPage() {
     try {
       console.log("📄 Generating CSV export...")
       
-      // Convert members to export format
       const exportData = filteredMembers.map(convertMemberForExport)
       
       if (exportData.length === 0) {
@@ -212,22 +216,18 @@ function ExportPage() {
         return
       }
       
-      // Get headers from first record
       const headers = Object.keys(exportData[0])
       
-      // Create CSV content
       const csvContent = [
-        headers.join(','), // Header row
+        headers.join(','),
         ...exportData.map(row => 
           headers.map(header => {
-            // Escape quotes and wrap in quotes if contains comma
             const value = String(row[header] || '')
             return value.includes(',') ? `"${value.replace(/"/g, '""')}"` : value
           }).join(',')
         )
       ].join('\n')
       
-      // Create and download file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
       const link = document.createElement('a')
       const url = URL.createObjectURL(blob)
@@ -249,15 +249,13 @@ function ExportPage() {
     }
   }
 
-  // Export to Excel (simplified - generates CSV with .xlsx extension)
+  // Export to Excel
   const exportToExcel = () => {
     setExporting(true)
     
     try {
       console.log("📊 Generating Excel export...")
       
-      // For now, we'll create a CSV and name it .xlsx
-      // In a real app, you'd use a library like xlsx-populate
       const exportData = filteredMembers.map(convertMemberForExport)
       
       if (exportData.length === 0) {
@@ -335,51 +333,60 @@ function ExportPage() {
     })
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-green-700">Loading export data...</h2>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   const selectedFieldCount = Object.values(selectedFields).filter(Boolean).length
 
-  return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/')}
-            className="mb-4"
-          >
-            ← Back to Home
-          </Button>
-          <h1 className="text-3xl font-bold text-green-700">
-            Export Member Data
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Download member information in CSV or Excel format
-          </p>
+  const ExportContent = () => {
+    if (loading) {
+      return (
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold text-green-700">Loading export data...</h2>
+          <p className="text-gray-600 mt-2">Fetching member information from database...</p>
         </div>
-        
+      )
+    }
+
+    return (
+      <div className="space-y-6">
+        {/* Header Card */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800">Data Export Center</h3>
+              <p className="text-gray-600 mt-1">Download member information in CSV or Excel format</p>
+            </div>
+            <div className="text-3xl">📊</div>
+          </div>
+          
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">{members.length}</div>
+              <div className="text-sm text-gray-600">Total Members</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">{filteredMembers.length}</div>
+              <div className="text-sm text-gray-600">Available To Export</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-600">{selectedFieldCount}</div>
+              <div className="text-sm text-gray-600">Selected Fields</div>
+            </div>
+            
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Field Selection Panel */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Select Fields to Export</h2>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-semibold text-gray-800">Select Fields to Export</h3>
                 <div className="space-x-2">
                   <Button variant="outline" size="sm" onClick={selectEssentialFields}>
-                    Essential Only
+                    📋 Essential Only
                   </Button>
                   <Button variant="outline" size="sm" onClick={selectAllFields}>
-                    Select All
+                    ✅ Select All
                   </Button>
                 </div>
               </div>
@@ -387,21 +394,27 @@ function ExportPage() {
               {/* Group fields by category */}
               {['Personal', 'Location', 'Farm', 'System'].map(category => (
                 <div key={category} className="mb-6">
-                  <h3 className="font-medium text-gray-800 mb-3 border-b pb-1">
+                  <h4 className="font-medium text-gray-800 mb-3 pb-2 border-b border-gray-200 flex items-center">
+                    <span className="mr-2">
+                      {category === 'Personal' && '👤'}
+                      {category === 'Location' && '📍'}
+                      {category === 'Farm' && '🚜'}
+                      {category === 'System' && '⚙️'}
+                    </span>
                     {category} Information
-                  </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {Object.entries(fieldDefinitions)
                       .filter(([_, def]) => def.category === category)
                       .map(([fieldKey, fieldDef]) => (
-                        <label key={fieldKey} className="flex items-center space-x-2 text-sm">
+                        <label key={fieldKey} className="flex items-center space-x-3 text-sm p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
                           <input
                             type="checkbox"
                             checked={selectedFields[fieldKey]}
                             onChange={() => toggleField(fieldKey)}
                             className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                           />
-                          <span className={selectedFields[fieldKey] ? 'font-medium' : ''}>
+                          <span className={selectedFields[fieldKey] ? 'font-medium text-gray-900' : 'text-gray-600'}>
                             {fieldDef.label}
                           </span>
                         </label>
@@ -414,73 +427,118 @@ function ExportPage() {
 
           {/* Export Panel */}
           <div className="space-y-6">
-            {/* Preview Panel */}
+            {/* Filter Panel */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Export Preview</h2>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">🔍 Filter Data</h3>
               
-              {/* Search Filter */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Filter Members</label>
-                <Input
-                  placeholder="Search to filter export..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Total Members:</span>
-                  <span className="font-medium">{members.length}</span>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Search Members</label>
+                  <Input
+                    placeholder="Filter by name, province, etc..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full"
+                  />
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Filtered Members:</span>
-                  <span className="font-medium">{filteredMembers.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Selected Fields:</span>
-                  <span className="font-medium">{selectedFieldCount}</span>
-                </div>
+                
+                {searchTerm && (
+                  <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                    <div className="font-medium">Active Filter:</div>
+                    <div>"{searchTerm}" - {filteredMembers.length} matches</div>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setSearchTerm("")}
+                      className="mt-2"
+                    >
+                      Clear Filter
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Export Buttons */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Download</h2>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">📥 Download</h3>
               
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <Button 
                   onClick={exportToCSV}
                   disabled={exporting || selectedFieldCount === 0 || filteredMembers.length === 0}
-                  className="w-full"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
                 >
-                  {exporting ? "Exporting..." : "Export as CSV"}
+                  {exporting ? "⏳ Exporting..." : "📄 Export as CSV"}
                 </Button>
                 
                 <Button 
                   variant="outline"
                   onClick={exportToExcel}
                   disabled={exporting || selectedFieldCount === 0 || filteredMembers.length === 0}
-                  className="w-full"
+                  className="w-full border-blue-500 text-blue-600 hover:bg-blue-50"
                 >
-                  {exporting ? "Exporting..." : "Export as Excel"}
+                  {exporting ? "⏳ Exporting..." : "📊 Export as Excel"}
                 </Button>
+                
+                <div className="pt-4 border-t border-gray-200">
+                  <Button 
+                    variant="outline"
+                    onClick={() => navigate(isDashboardMode ? '/dashboard/members' : '/members')}
+                    className="w-full"
+                  >
+                    👥 Back to Members
+                  </Button>
+                </div>
               </div>
               
               {selectedFieldCount === 0 && (
-                <p className="text-red-500 text-sm mt-2">
-                  Please select at least one field to export
-                </p>
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-600 text-sm font-medium">⚠️ No fields selected</p>
+                  <p className="text-red-500 text-sm">Please select at least one field to export</p>
+                </div>
               )}
               
               {filteredMembers.length === 0 && members.length > 0 && (
-                <p className="text-red-500 text-sm mt-2">
-                  No members match your search filter
-                </p>
+                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-yellow-600 text-sm font-medium">🔍 No matches found</p>
+                  <p className="text-yellow-500 text-sm">No members match your current filter</p>
+                </div>
               )}
             </div>
           </div>
         </div>
+      </div>
+    )
+  }
+
+  // Render different layouts based on dashboard mode
+  if (isDashboardMode) {
+    return (
+      <DashboardLayout>
+        <ExportContent />
+      </DashboardLayout>
+    )
+  }
+
+  // Legacy standalone page (for backward compatibility)
+  return (
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-6">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/')}
+            className="mb-4"
+          >
+            ← Back to Home
+          </Button>
+          <h1 className="text-3xl font-bold text-green-700">
+            Export Data
+          </h1>
+        </div>
+        
+        <ExportContent />
       </div>
     </div>
   )

@@ -1,10 +1,15 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import MemberForm from "@/components/MemberForm"
 import { supabase } from "@/lib/supabase"
+import DashboardLayout from "@/components/DashboardLayout"
 
 function AddMemberPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Check if we're in dashboard mode
+  const isDashboardMode = location.pathname.startsWith('/dashboard')
 
   const handleAddMember = async (data) => {
     console.clear()
@@ -48,9 +53,10 @@ function AddMemberPage() {
       
       console.log("✅ Member saved successfully!")
       console.log("Saved member:", savedMember)
-      alert("🎉 Member registered successfully! Check the Members Directory to see them.")
+      alert("🎉 Member registered successfully!")
       
-      navigate("/members")
+      // Navigate back to members directory
+      navigate(isDashboardMode ? "/dashboard/members" : "/members")
       
     } catch (err) {
       console.error("❌ Save error:", err)
@@ -58,6 +64,39 @@ function AddMemberPage() {
     }
   }
 
+  const AddMemberContent = () => (
+    <div className="space-y-6">
+      {/* Header Card */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">Member Registration</h3>
+            <p className="text-gray-600 mt-1">Add a new tobacco farmer to the database</p>
+          </div>
+          <div className="text-3xl">👤</div>
+        </div>
+      </div>
+
+      {/* Form Card */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <MemberForm 
+          onSubmit={handleAddMember}
+          submitButtonText="Register Member"
+        />
+      </div>
+    </div>
+  )
+
+  // Render different layouts based on dashboard mode
+  if (isDashboardMode) {
+    return (
+      <DashboardLayout>
+        <AddMemberContent />
+      </DashboardLayout>
+    )
+  }
+
+  // Legacy standalone page (for backward compatibility)
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
