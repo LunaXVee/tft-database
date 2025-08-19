@@ -71,7 +71,7 @@ function DashboardLayout({ children }) {
               </div>
               <div>
                 <h1 className="text-lg lg:text-xl font-bold text-gray-800">TFT</h1>
-                <p className="text-xs lg:text-sm text-gray-600">Tobacco Farmers Trust</p>
+                <p className="text-xs lg:text-sm text-gray-600">The Farmers Talk</p>
               </div>
             </div>
             {/* Close button for mobile */}
@@ -134,7 +134,7 @@ function DashboardLayout({ children }) {
                   {navigationItems.find(item => isActiveRoute(item.path))?.label || 'Dashboard'}
                 </h2>
                 <p className="text-gray-600 mt-1 hidden sm:block">
-                  Manage your tobacco farmer members
+                   Manage your members
                 </p>
               </div>
             </div>
