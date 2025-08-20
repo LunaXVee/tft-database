@@ -24,7 +24,7 @@ export const memberSchema = z.object({
   
   // Farm Information - MAKE THESE OPTIONAL FOR NOW
   // Farm Information - MAKE THESE REQUIRED NOW
-  farmType: z.enum(["communal", "a1", "a2", "small_scale_resettlement", "commercial"], 
+  farmType: z.enum(["communal", "a1", "a2", "small_scale_resettlement", "commercial", "old_resettlement"], 
     "Please select farm type"),
   farmName: z.string().optional(),
   farmSize: z.string().min(1, "Farm size is required"),

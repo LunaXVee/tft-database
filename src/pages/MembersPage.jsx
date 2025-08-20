@@ -200,7 +200,7 @@ function MembersPage() {
                       ) : (
                         <div>
                           <div className="text-lg mb-2">📋 No members yet</div>
-                          <div>Start by adding your first tobacco farmer</div>
+                          <div>Start by adding your first farmer</div>
                           <Button 
                             onClick={() => navigate(isDashboardMode ? '/dashboard/add-member' : '/add-member')}
                             className="mt-3"
@@ -336,7 +336,7 @@ function MembersPage() {
             Members Directory
           </h1>
           <p className="text-gray-600 mt-2">
-            Manage tobacco farmer members
+            Manage farm members
           </p>
         </div>
         

@@ -276,7 +276,7 @@ function MemberForm({
                 {...form.register("cluster")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               >
-                <option value="">Select Your Cluster Number</option>
+                <option value="">Choose Your Cluster</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -314,6 +314,7 @@ function MemberForm({
                 <option value="a2">A2</option>
                 <option value="small_scale_resettlement">Small Scale Resettlement</option>
                 <option value="commercial">Commercial</option>
+                <option value="old_resettlement">Old Resettlement</option>
               </select>
               {form.formState.errors.farmType && (
                 <p className="text-red-500 text-sm mt-1">
