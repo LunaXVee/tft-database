@@ -8,7 +8,8 @@ function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
   // Navigation items for the sidebar
-  const navigationItems = [
+  // In DashboardLayout.jsx, update the navigationItems array:
+const navigationItems = [
     {
       id: 'dashboard',
       label: 'Dashboard',
@@ -16,11 +17,11 @@ function DashboardLayout({ children }) {
       path: '/dashboard'
     },
     {
-        id: 'cluster-leaders',
-        label: 'Cluster Leaders',
-        icon: '👥',
-        path: '/dashboard/cluster-leaders'
-      },
+      id: 'cluster-leaders',
+      label: 'Cluster Leaders',
+      icon: '👥',
+      path: '/dashboard/cluster-leaders'
+    },
     {
       id: 'members-overview',
       label: 'Members Overview',
