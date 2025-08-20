@@ -20,7 +20,7 @@ export const memberSchema = z.object({
   district: z.string().min(1, "District is required"),
   ward: z.string().optional(),
   village: z.string().optional(),
-  cluster: z.string().min(1, "Cluster number is required"),
+  cluster: z.string().min(1, "Cluster is required"),
   
   // Farm Information - MAKE THESE OPTIONAL FOR NOW
   // Farm Information - MAKE THESE REQUIRED NOW
