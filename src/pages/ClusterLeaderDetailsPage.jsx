@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import DashboardLayout from "@/components/DashboardLayout"
+import { supabase } from "@/lib/supabase"
+
 
 function ClusterLeaderDetailsPage() {
   const { id } = useParams()
@@ -9,85 +11,81 @@ function ClusterLeaderDetailsPage() {
   const [leader, setLeader] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Sample data - replace with real database fetch
-  const sampleClusterLeaders = [
-    {
-      id: 1,
-      name: "Joseph Mukamuri",
-      clusterName: "Mazowe Valley Cluster",
-      location: {
-        province: "Mashonaland Central",
-        district: "Mazoe District",
-        ward: "Ward 15",
-        village: "Mazowe Village"
-      },
-      contactInfo: {
-        phone: "+263 78 123 4567",
-        email: "joseph.m@gmail.com",
-        address: "Plot 45, Mazowe Valley"
-      },
-      members: 18,
-      yearAppointed: 2022,
-      secretary: {
-        name: "Mary Chidziva",
-        phone: "+263 78 234 5678",
-        email: "mary.chid@gmail.com"
-      },
-      treasurer: {
-        name: "Peter Makoni",
-        phone: "+263 78 345 6789",
-        email: "peter.mak@yahoo.com"
-      },
-      deputy: {
-        name: "Sarah Mukamuri",
-        phone: "+263 78 456 7890",
-        email: "sarah.muk@gmail.com"
-      },
-      about: "Joseph has been leading the Mazowe Valley Cluster since 2022. He is a experienced tobacco farmer with over 15 years in the industry and has helped increase cluster membership by 40% during his tenure."
-    },
-    {
-      id: 2,
-      name: "Grace Chinembiri",
-      clusterName: "Chiredzi East Cluster",
-      location: {
-        province: "Masvingo",
-        district: "Chiredzi District",
-        ward: "Ward 8",
-        village: "Chiredzi East"
-      },
-      contactInfo: {
-        phone: "+263 78 354 6789",
-        email: "grace.chin@yahoo.com",
-        address: "Farm 23, Chiredzi East"
-      },
-      members: 12,
-      yearAppointed: 2023,
-      secretary: {
-        name: "John Mpofu",
-        phone: "+263 78 234 5679",
-        email: "john.mp@gmail.com"
-      },
-      treasurer: {
-        name: "Linda Nyoni",
-        phone: "+263 78 345 6790",
-        email: "linda.ny@yahoo.com"
-      },
-      deputy: {
-        name: "Thomas Chin",
-        phone: "+263 78 456 7891",
-        email: "thomas.ch@gmail.com"
-      },
-      about: "Grace is a dedicated leader who has brought innovative farming techniques to the Chiredzi East Cluster. She focuses on sustainable tobacco farming practices."
-    }
-    // Add more sample data as needed
-  ]
-
+  // Fetch cluster leader data from database
   useEffect(() => {
-    // Simulate fetching data
-    const foundLeader = sampleClusterLeaders.find(l => l.id === parseInt(id))
-    setLeader(foundLeader)
-    setLoading(false)
+    fetchClusterLeader()
   }, [id])
+
+  const fetchClusterLeader = async () => {
+    try {
+      console.log("📥 Fetching cluster leader details for ID:", id)
+      
+      const { data, error } = await supabase
+        .from('cluster_leaders')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (error) {
+        console.error("❌ Error fetching cluster leader:", error)
+        setLeader(null)
+        return
+      }
+
+      // Get member count for this cluster
+      const { data: members, error: membersError } = await supabase
+        .from('members')
+        .select('id')
+        .eq('cluster', data.cluster_name)
+
+      const memberCount = membersError ? 0 : (members ? members.length : 0)
+
+      // Transform database data to match component expectations
+      const transformedLeader = {
+        id: data.id,
+        name: `${data.first_name} ${data.last_name}`,
+        clusterName: data.cluster_name,
+        location: {
+          province: data.province,
+          district: data.district,
+          ward: data.ward || 'Not specified',
+          village: data.village || 'Not specified'
+        },
+        contactInfo: {
+          phone: data.phone,
+          email: data.email || 'Not provided',
+          address: data.address || 'Not provided'
+        },
+        members: memberCount,
+        yearAppointed: data.year_appointed,
+        secretary: {
+          name: data.secretary_name || 'Not assigned',
+          phone: data.secretary_phone || 'Not provided',
+          email: data.secretary_email || 'Not provided'
+        },
+        treasurer: {
+          name: data.treasurer_name || 'Not assigned',
+          phone: data.treasurer_phone || 'Not provided',
+          email: data.treasurer_email || 'Not provided'
+        },
+        deputy: {
+          name: data.deputy_name || 'Not assigned',
+          phone: data.deputy_phone || 'Not provided',
+          email: data.deputy_email || 'Not provided'
+        },
+        about: data.about || 'No additional information available.'
+      }
+
+      console.log("✅ Cluster leader details loaded:", transformedLeader)
+      setLeader(transformedLeader)
+      
+    } catch (err) {
+      console.error("❌ Fetch error:", err)
+      setLeader(null)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (loading) {
     return (

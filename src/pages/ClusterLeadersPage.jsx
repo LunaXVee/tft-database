@@ -25,168 +25,156 @@ function ClusterLeadersPage() {
     provincesCovered: 0
   })
 
-  // Sample data for now - we'll replace this with real database data
-  const sampleClusterLeaders = [
-    {
-      id: 1,
-      name: "Joseph Mukamuri",
-      clusterName: "Mazowe Valley Cluster",
-      location: {
-        province: "Mashonaland Central",
-        district: "Mazoe District"
-      },
-      contactInfo: {
-        phone: "+263 78 123 4567",
-        email: "joseph.m@gmail.com"
-      },
-      members: 18,
-      secretary: {
-        name: "Mary Chidziva",
-        phone: "+263 78 234 5678"
-      },
-      treasurer: {
-        name: "Peter Makoni",
-        phone: "+263 78 345 6789"
-      },
-      deputy: {
-        name: "Sarah Mukamuri",
-        phone: "+263 78 456 7890"
-      }
-    },
-    {
-      id: 2,
-      name: "Grace Chinembiri",
-      clusterName: "Chiredzi East Cluster",
-      location: {
-        province: "Masvingo",
-        district: "Chiredzi District"
-      },
-      contactInfo: {
-        phone: "+263 78 354 6789",
-        email: "grace.chin@yahoo.com"
-      },
-      members: 12,
-      secretary: {
-        name: "John Mpofu",
-        phone: "+263 78 234 5679"
-      },
-      treasurer: {
-        name: "Linda Nyoni",
-        phone: "+263 78 345 6790"
-      },
-      deputy: {
-        name: "Thomas Chin",
-        phone: "+263 78 456 7891"
-      }
-    },
-    {
-      id: 3,
-      name: "David Nyamande",
-      clusterName: "Gokwe South Cluster",
-      location: {
-        province: "Midlands",
-        district: "Gokwe District"
-      },
-      contactInfo: {
-        phone: "+263 78 567 8910",
-        email: "d.nyamande@gmail.com"
-      },
-      members: 6,
-      secretary: {
-        name: "Ruth Sibanda",
-        phone: "+263 78 234 5680"
-      },
-      treasurer: {
-        name: "Moses Dube",
-        phone: "+263 78 345 6791"
-      },
-      deputy: {
-        name: "Grace Nyama",
-        phone: "+263 78 456 7892"
-      }
-    },
-    {
-      id: 4,
-      name: "Tendai Marondera",
-      clusterName: "Rusape Highland Cluster",
-      location: {
-        province: "Manicaland",
-        district: "Makoni District"
-      },
-      contactInfo: {
-        phone: "+263 78 789 0123",
-        email: "tendai.maro@hotmail.com"
-      },
-      members: 2,
-      secretary: {
-        name: "Jane Mutasa",
-        phone: "+263 78 234 5681"
-      },
-      treasurer: {
-        name: "Paul Chieza",
-        phone: "+263 78 345 6792"
-      },
-      deputy: {
-        name: "Alice Maron",
-        phone: "+263 78 456 7893"
-      }
-    },
-    {
-      id: 5,
-      name: "Micheal Sibanda",
-      clusterName: "Hwange West Cluster",
-      location: {
-        province: "Matabeleland North",
-        district: "Hwange District"
-      },
-      contactInfo: {
-        phone: "+263 78 901 2345",
-        email: "m.sibanda@gmail.com"
-      },
-      members: 24,
-      secretary: {
-        name: "Betty Ndlovu",
-        phone: "+263 78 234 5682"
-      },
-      treasurer: {
-        name: "Simon Moyo",
-        phone: "+263 78 345 6793"
-      },
-      deputy: {
-        name: "Joyce Siban",
-        phone: "+263 78 456 7894"
-      }
-    }
-  ]
-
   useEffect(() => {
-    // For now, use sample data
-    setClusterLeaders(sampleClusterLeaders)
-    calculateStats(sampleClusterLeaders)
-    setLoading(false)
+    fetchClusterLeaders()
   }, [])
 
-  const calculateStats = (leaders) => {
-    const activeClusters = leaders.length
-    const totalLeaders = leaders.length
-    const totalMembers = leaders.reduce((sum, leader) => sum + leader.members, 0)
-    const avgMembersPerCluster = totalMembers / activeClusters || 0
-    const provincesCovered = new Set(leaders.map(leader => leader.location.province)).size
+  const fetchClusterLeaders = async () => {
+    try {
+      console.log("📥 Fetching cluster leaders from database...")
+      
+      const { data: leaders, error: leadersError } = await supabase
+        .from('cluster_leaders')
+        .select('*')
+        .eq('status', 'Active')
+        .order('created_at', { ascending: false })
 
-    setStats({
-      activeClusters,
-      totalLeaders,
-      avgMembersPerCluster: Math.round(avgMembersPerCluster * 10) / 10,
-      provincesCovered
-    })
+      if (leadersError) {
+        console.error("❌ Error fetching cluster leaders:", leadersError)
+        return
+      }
+
+      console.log("✅ Cluster leaders fetched successfully:", leaders)
+      setClusterLeaders(leaders || [])
+      
+      // Calculate statistics
+      await calculateStats(leaders || [])
+      
+    } catch (err) {
+      console.error("❌ Fetch error:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const calculateStats = async (leaders) => {
+    try {
+      const activeClusters = leaders.length
+      const totalLeaders = leaders.length
+      const provincesCovered = new Set(leaders.map(leader => leader.province)).size
+
+      // Calculate member counts per cluster by counting members assigned to each cluster
+      const { data: members, error: membersError } = await supabase
+        .from('members')
+        .select('cluster')
+
+      let avgMembersPerCluster = 0
+      if (!membersError && members) {
+        // Group members by cluster and calculate average
+        const clusterMemberCounts = {}
+        members.forEach(member => {
+          if (member.cluster) {
+            clusterMemberCounts[member.cluster] = (clusterMemberCounts[member.cluster] || 0) + 1
+          }
+        })
+        
+        const totalMembers = Object.values(clusterMemberCounts).reduce((sum, count) => sum + count, 0)
+        avgMembersPerCluster = activeClusters > 0 ? totalMembers / activeClusters : 0
+      }
+
+      setStats({
+        activeClusters,
+        totalLeaders,
+        avgMembersPerCluster: Math.round(avgMembersPerCluster * 10) / 10,
+        provincesCovered
+      })
+
+    } catch (err) {
+      console.error("❌ Error calculating stats:", err)
+    }
+  }
+
+  const getClusterMemberCount = async (clusterName) => {
+    try {
+      const { data, error } = await supabase
+        .from('members')
+        .select('id')
+        .eq('cluster', clusterName)
+
+      if (error) {
+        console.error("Error counting cluster members:", error)
+        return 0
+      }
+
+      return data ? data.length : 0
+    } catch (err) {
+      console.error("Error in getClusterMemberCount:", err)
+      return 0
+    }
+  }
+
+  // Enhanced cluster leaders with member counts
+  const [leadersWithCounts, setLeadersWithCounts] = useState([])
+
+  useEffect(() => {
+    const addMemberCounts = async () => {
+      if (clusterLeaders.length > 0) {
+        const leadersWithMemberCounts = await Promise.all(
+          clusterLeaders.map(async (leader) => {
+            const memberCount = await getClusterMemberCount(leader.cluster_name)
+            return { ...leader, memberCount }
+          })
+        )
+        setLeadersWithCounts(leadersWithMemberCounts)
+      }
+    }
+
+    addMemberCounts()
+  }, [clusterLeaders])
+
+  // Delete cluster leader function
+  const handleDeleteLeader = async (leaderId, leaderName) => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete ${leaderName}? This action cannot be undone.`
+    )
+    
+    if (!isConfirmed) {
+      return
+    }
+    
+    try {
+      console.log("🗑️ Deleting cluster leader:", leaderId)
+      
+      const { error } = await supabase
+        .from('cluster_leaders')
+        .delete()
+        .eq('id', leaderId)
+      
+      if (error) {
+        console.error("❌ Delete failed:", error)
+        alert("Failed to delete cluster leader. Check console for details.")
+        return
+      }
+      
+      console.log("✅ Cluster leader deleted successfully!")
+      alert("Cluster leader deleted successfully!")
+      
+      // Refresh the list
+      fetchClusterLeaders()
+      
+    } catch (err) {
+      console.error("❌ Delete error:", err)
+      alert("Delete error. Check console for details.")
+    }
   }
 
   // Filter cluster leaders based on search term
-  const filteredLeaders = clusterLeaders.filter(leader =>
-    leader.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    leader.clusterName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    leader.location.province?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    leader.location.district?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredLeaders = leadersWithCounts.filter(leader =>
+    leader.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    leader.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    leader.cluster_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    leader.province?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    leader.district?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   if (loading) {
@@ -194,7 +182,7 @@ function ClusterLeadersPage() {
       <DashboardLayout>
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold text-green-700">Loading cluster leaders...</h2>
-          <p className="text-gray-600 mt-2">Fetching cluster leadership data...</p>
+          <p className="text-gray-600 mt-2">Fetching cluster leadership data from database...</p>
         </div>
       </DashboardLayout>
     )
@@ -216,7 +204,10 @@ function ClusterLeadersPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full lg:w-80"
             />
-            <Button className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap">
+            <Button 
+              onClick={() => navigate('/dashboard/add-cluster-leader')}
+              className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap"
+            >
               + Add New Cluster Leader
             </Button>
           </div>
@@ -282,7 +273,10 @@ function ClusterLeadersPage() {
                           <div>
                             <div className="text-lg mb-2">👥 No cluster leaders yet</div>
                             <div>Start by adding your first cluster leader</div>
-                            <Button className="mt-3 bg-green-600 hover:bg-green-700 text-white">
+                            <Button 
+                              onClick={() => navigate('/dashboard/add-cluster-leader')}
+                              className="mt-3 bg-green-600 hover:bg-green-700 text-white"
+                            >
                               Add First Cluster Leader
                             </Button>
                           </div>
@@ -298,37 +292,37 @@ function ClusterLeadersPage() {
                           onClick={() => navigate(`/dashboard/cluster-leader/${leader.id}`)}
                           className="font-medium text-blue-600 hover:text-blue-800 hover:underline text-left"
                         >
-                          {leader.name}
+                          {leader.first_name} {leader.last_name}
                         </button>
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="font-medium text-gray-900">{leader.clusterName}</div>
+                          <div className="font-medium text-gray-900">{leader.cluster_name}</div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
                           <div className="text-sm bg-gray-100 px-2 py-1 rounded text-center">
-                            {leader.location.province}
+                            {leader.province}
                           </div>
                           <div className="text-xs text-gray-600 text-center">
-                            {leader.location.district}
+                            {leader.district}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
                           <div className="text-sm font-medium text-green-600">
-                            {leader.contactInfo.phone}
+                            {leader.phone}
                           </div>
                           <div className="text-xs text-gray-600">
-                            {leader.contactInfo.email}
+                            {leader.email || 'No email'}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="text-lg font-bold text-gray-800">
-                          {leader.members}
+                          {leader.memberCount || 0}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -344,6 +338,7 @@ function ClusterLeadersPage() {
                           <Button 
                             variant="outline" 
                             size="sm"
+                            onClick={() => handleDeleteLeader(leader.id, `${leader.first_name} ${leader.last_name}`)}
                             className="text-red-600 border-red-200 hover:bg-red-50"
                           >
                             Delete
@@ -366,8 +361,8 @@ function ClusterLeadersPage() {
                   {searchTerm && ` (filtered by "${searchTerm}")`}
                 </div>
                 <div className="flex flex-wrap items-center gap-4">
-                  <span>👥 Total Members: {filteredLeaders.reduce((sum, l) => sum + l.members, 0)}</span>
-                  <span>🏛️ Provinces: {new Set(filteredLeaders.map(l => l.location.province)).size}</span>
+                  <span>👥 Total Members: {filteredLeaders.reduce((sum, l) => sum + (l.memberCount || 0), 0)}</span>
+                  <span>🏛️ Provinces: {new Set(filteredLeaders.map(l => l.province)).size}</span>
                 </div>
               </div>
             </div>
