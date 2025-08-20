@@ -16,9 +16,15 @@ function DashboardLayout({ children }) {
       path: '/dashboard'
     },
     {
+        id: 'cluster-leaders',
+        label: 'Cluster Leaders',
+        icon: '👥',
+        path: '/dashboard/cluster-leaders'
+      },
+    {
       id: 'members-overview',
       label: 'Members Overview',
-      icon: '👥',
+      icon: '👤',
       path: '/dashboard/members'
     },
     {
