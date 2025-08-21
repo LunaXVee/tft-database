@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { memberSchema } from "@/lib/memberSchema"
+import { supabase } from "@/lib/supabase"
 
 function MemberForm({ 
   initialData = {},     // Default to empty object
@@ -13,6 +14,8 @@ function MemberForm({
   isLoading = false    // Whether we're currently saving
 }) {
   const [currentTab, setCurrentTab] = useState("personal")
+  const [clusters, setClusters] = useState([]) // State for dynamic clusters
+  const [clustersLoading, setClustersLoading] = useState(true)
   
   const form = useForm({
     resolver: zodResolver(memberSchema),
@@ -37,6 +40,36 @@ function MemberForm({
       farmSize: initialData.farmSize || "",
     }
   })
+
+  // Fetch clusters from database
+  useEffect(() => {
+    fetchClusters()
+  }, [])
+
+  const fetchClusters = async () => {
+    try {
+      console.log("📥 Fetching clusters from database...")
+      
+      const { data, error } = await supabase
+        .from('cluster_leaders')
+        .select('cluster_name, province, district')
+        .eq('status', 'Active')
+        .order('cluster_name', { ascending: true })
+
+      if (error) {
+        console.error("❌ Error fetching clusters:", error)
+        return
+      }
+
+      console.log("✅ Clusters fetched successfully:", data)
+      setClusters(data || [])
+      
+    } catch (err) {
+      console.error("❌ Fetch clusters error:", err)
+    } finally {
+      setClustersLoading(false)
+    }
+  }
 
   // Handle form submission - just call the function passed in as props
   const handleSubmit = (data) => {
@@ -269,28 +302,36 @@ function MemberForm({
               )}
             </div>
 
-            {/* Cluster */}
+            {/* Cluster - NOW DYNAMIC! */}
             <div>
               <label className="block text-sm font-medium mb-1">Cluster *</label>
               <select 
                 {...form.register("cluster")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                disabled={clustersLoading}
               >
-                <option value="">Choose Your Cluster</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
+                <option value="">
+                  {clustersLoading ? "Loading clusters..." : "Choose Your Cluster"}
+                </option>
+                {clusters.map((cluster) => (
+                  <option key={cluster.cluster_name} value={cluster.cluster_name}>
+                    {cluster.cluster_name} ({cluster.province}, {cluster.district})
+                  </option>
+                ))}
               </select>
               {form.formState.errors.cluster && (
                 <p className="text-red-500 text-sm mt-1">
                   {form.formState.errors.cluster.message}
+                </p>
+              )}
+              {clustersLoading && (
+                <p className="text-blue-500 text-sm mt-1">
+                  Loading available clusters...
+                </p>
+              )}
+              {!clustersLoading && clusters.length === 0 && (
+                <p className="text-yellow-600 text-sm mt-1">
+                  No active clusters found. Please contact admin.
                 </p>
               )}
             </div>
@@ -360,8 +401,8 @@ function MemberForm({
         <Button type="button" variant="outline">
           Cancel
         </Button>
-        <Button type="submit" disabled={isLoading}>
-          {submitButtonText}
+        <Button type="submit" disabled={isLoading || clustersLoading}>
+          {isLoading ? "Saving..." : submitButtonText}
         </Button>
       </div>
     </form>

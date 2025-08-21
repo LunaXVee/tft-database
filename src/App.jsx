@@ -10,6 +10,7 @@ import ClusterLeadersPage from "./pages/ClusterLeadersPage"
 import ClusterLeaderDetailsPage from "./pages/ClusterLeaderDetailsPage"
 import AddClusterLeaderPage from "./pages/AddClusterLeaderPage"
 import EditClusterLeaderPage from "./pages/EditClusterLeaderPage"
+import ClusterMembersPage from "./pages/ClusterMembersPage"
 
 
 
@@ -23,7 +24,9 @@ function App() {
           <Route path="/dashboard/add-cluster-leader" element={<AddClusterLeaderPage />} />
           <Route path="/dashboard/cluster-leader/:id" element={<ClusterLeaderDetailsPage />} />
           <Route path="/dashboard/cluster-leader/:id/edit" element={<EditClusterLeaderPage />} />
-          
+
+          <Route path="/dashboard/cluster/:clusterName/members" element={<ClusterMembersPage />} />
+
           <Route path="/dashboard/members" element={<MembersPage />} />
           <Route path="/dashboard/add-member" element={<AddMemberPage />} />
           <Route path="/dashboard/export" element={<ExportPage />} />

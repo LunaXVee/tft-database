@@ -2,8 +2,6 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import DashboardLayout from "@/components/DashboardLayout"
-import { supabase } from "@/lib/supabase"
-
 
 function ClusterLeaderDetailsPage() {
   const { id } = useParams()
@@ -305,9 +303,10 @@ function ClusterLeaderDetailsPage() {
                 </Button>
                 <Button 
                   variant="outline"
+                  onClick={() => navigate(`/dashboard/cluster/${encodeURIComponent(leader.clusterName)}/members`)}
                   className="w-full"
                 >
-                  👥 View Cluster Members
+                  👥 View Cluster Members ({leader.members})
                 </Button>
                 <Button 
                   variant="outline"
