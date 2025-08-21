@@ -1,15 +1,15 @@
 import { useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Calendar as CalendarIcon } from 'lucide-react'
 
 function DashboardLayout({ children }) {
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
-  // Navigation items for the sidebar
-  // In DashboardLayout.jsx, update the navigationItems array:
-const navigationItems = [
+  // Fixed navigationItems array with consistent structure
+  const navigationItems = [
     {
       id: 'dashboard',
       label: 'Dashboard',
@@ -33,6 +33,12 @@ const navigationItems = [
       label: 'Add Member',
       icon: '➕',
       path: '/dashboard/add-member'
+    },
+    {
+      id: 'calendar',
+      label: 'Calendar',
+      icon: '📅', // Using emoji for consistency
+      path: '/dashboard/calendar'
     },
     {
       id: 'export-data',
