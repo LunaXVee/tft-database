@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import DashboardLayout from "@/components/DashboardLayout"
+import AddEventModal from "@/components/AddEventModal"
 import { supabase } from "@/lib/supabase"
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns'
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus } from 'lucide-react'
@@ -40,10 +41,12 @@ const EVENT_TYPES = {
 }
 
 function CalendarPage() {
-  const [currentDate, setCurrentDate] = useState(new Date())
+  // Start calendar in November 2025 where we have sample events
+  const [currentDate, setCurrentDate] = useState(new Date(2025, 10, 1)) // November 2025 (month is 0-indexed)
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState('Month') // Month, Week, Day
+  const [showAddModal, setShowAddModal] = useState(false)
   
   useEffect(() => {
     fetchEvents()
@@ -52,10 +55,16 @@ function CalendarPage() {
   const fetchEvents = async () => {
     try {
       setLoading(true)
+      console.log("📥 Fetching events from database...")
       
       // Get events for the current month
       const monthStart = startOfMonth(currentDate)
       const monthEnd = endOfMonth(currentDate)
+      
+      console.log("🔍 DEBUG INFO:")
+      console.log("Current date:", currentDate)
+      console.log("Month start:", monthStart.toISOString())
+      console.log("Month end:", monthEnd.toISOString())
       
       const { data, error } = await supabase
         .from('events')
@@ -70,6 +79,18 @@ function CalendarPage() {
       }
 
       console.log("✅ Events fetched:", data)
+      console.log("📊 Number of events:", data ? data.length : 0)
+      
+      // Debug: Let's also check ALL events in the table
+      const { data: allEvents, error: allError } = await supabase
+        .from('events')
+        .select('id, title, start_date, event_type')
+        .order('start_date', { ascending: true })
+        
+      if (!allError) {
+        console.log("🗃️ ALL EVENTS in database:", allEvents)
+      }
+      
       setEvents(data || [])
       
     } catch (err) {
@@ -149,7 +170,7 @@ function CalendarPage() {
                 ))}
               </div>
               
-              <Button className="bg-green-600 hover:bg-green-700 text-white">
+              <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => setShowAddModal(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add Event
               </Button>
@@ -310,6 +331,13 @@ function CalendarPage() {
             </div>
           </div>
         </div>
+
+        {/* Add Event Modal */}
+        <AddEventModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onEventAdded={fetchEvents}
+        />
       </div>
     </DashboardLayout>
   )
