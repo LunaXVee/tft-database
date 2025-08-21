@@ -132,9 +132,9 @@ function AddEventModal({ isOpen, onClose, onEventAdded, selectedDate = null }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] flex flex-col">
+        {/* Modal Header - Fixed */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <div>
             <h2 className="text-2xl font-bold text-gray-800">Add New Event</h2>
             <p className="text-gray-600 mt-1">Create a new event for the TFT calendar</p>
@@ -147,206 +147,208 @@ function AddEventModal({ isOpen, onClose, onEventAdded, selectedDate = null }) {
           </button>
         </div>
 
-        {/* Modal Content */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Event Details */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-800">Event Details</h3>
-            
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Event Title *
-              </label>
-              <Input
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder="Enter event title"
-                required
-              />
-            </div>
-
-            {/* Event Type */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Event Type *
-              </label>
-              <select
-                name="event_type"
-                value={formData.event_type}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-                required
-              >
-                <option value="">Select event type</option>
-                {Object.entries(EVENT_TYPES).map(([key, type]) => (
-                  <option key={key} value={key}>
-                    {type.icon} {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              <Textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="Enter event description"
-                rows={3}
-              />
-            </div>
-          </div>
-
-          {/* Date & Time */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-800">Date & Time</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Start Date */}
+        {/* Modal Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            {/* Event Details */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-800">Event Details</h3>
+              
+              {/* Title */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Start Date & Time *
+                  Event Title *
                 </label>
                 <Input
-                  type="datetime-local"
-                  name="start_date"
-                  value={formData.start_date}
+                  name="title"
+                  value={formData.title}
                   onChange={handleInputChange}
+                  placeholder="Enter event title"
                   required
                 />
               </div>
 
-              {/* End Date */}
+              {/* Event Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  End Date & Time *
+                  Event Type *
                 </label>
-                <Input
-                  type="datetime-local"
-                  name="end_date"
-                  value={formData.end_date}
+                <select
+                  name="event_type"
+                  value={formData.event_type}
                   onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                   required
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Location & Details */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-800">Location & Details</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Location */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Location
-                </label>
-                <Input
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  placeholder="Enter location"
-                />
-              </div>
-
-              {/* Organizer */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Organizer
-                </label>
-                <Input
-                  name="organizer"
-                  value={formData.organizer}
-                  onChange={handleInputChange}
-                  placeholder="Enter organizer name"
-                />
-              </div>
-
-              {/* Province */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Province
-                </label>
-                <select
-                  name="province"
-                  value={formData.province}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 >
-                  <option value="">Select Province</option>
-                  <option value="harare">Harare</option>
-                  <option value="bulawayo">Bulawayo</option>
-                  <option value="manicaland">Manicaland</option>
-                  <option value="mashonaland-central">Mashonaland Central</option>
-                  <option value="mashonaland-east">Mashonaland East</option>
-                  <option value="mashonaland-west">Mashonaland West</option>
-                  <option value="masvingo">Masvingo</option>
-                  <option value="matabeleland-north">Matabeleland North</option>
-                  <option value="matabeleland-south">Matabeleland South</option>
-                  <option value="midlands">Midlands</option>
+                  <option value="">Select event type</option>
+                  {Object.entries(EVENT_TYPES).map(([key, type]) => (
+                    <option key={key} value={key}>
+                      {type.icon} {type.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
-              {/* Target Audience */}
+              {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Target Audience
+                  Description
                 </label>
-                <select
-                  name="target_audience"
-                  value={formData.target_audience}
+                <Textarea
+                  name="description"
+                  value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-                >
-                  <option value="all_cluster_leaders">All Cluster Leaders</option>
-                  <option value="all_members">All Members</option>
-                  <option value="specific_cluster">Specific Cluster</option>
-                </select>
+                  placeholder="Enter event description"
+                  rows={3}
+                />
               </div>
             </div>
 
-            {/* Cluster Name (conditional) */}
-            {formData.target_audience === 'specific_cluster' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Cluster Name
-                </label>
-                <Input
-                  name="cluster_name"
-                  value={formData.cluster_name}
-                  onChange={handleInputChange}
-                  placeholder="Enter specific cluster name"
-                />
-              </div>
-            )}
-          </div>
+            {/* Date & Time */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-800">Date & Time</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Start Date */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Start Date & Time *
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    name="start_date"
+                    value={formData.start_date}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-          {/* Modal Footer */}
-          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              {loading ? "Creating..." : "Create Event"}
-            </Button>
-          </div>
-        </form>
+                {/* End Date */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Date & Time *
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    name="end_date"
+                    value={formData.end_date}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Location & Details */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-800">Location & Details</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Location */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Location
+                  </label>
+                  <Input
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    placeholder="Enter location"
+                  />
+                </div>
+
+                {/* Organizer */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Organizer
+                  </label>
+                  <Input
+                    name="organizer"
+                    value={formData.organizer}
+                    onChange={handleInputChange}
+                    placeholder="Enter organizer name"
+                  />
+                </div>
+
+                {/* Province */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Province
+                  </label>
+                  <select
+                    name="province"
+                    value={formData.province}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                  >
+                    <option value="">Select Province</option>
+                    <option value="harare">Harare</option>
+                    <option value="bulawayo">Bulawayo</option>
+                    <option value="manicaland">Manicaland</option>
+                    <option value="mashonaland-central">Mashonaland Central</option>
+                    <option value="mashonaland-east">Mashonaland East</option>
+                    <option value="mashonaland-west">Mashonaland West</option>
+                    <option value="masvingo">Masvingo</option>
+                    <option value="matabeleland-north">Matabeleland North</option>
+                    <option value="matabeleland-south">Matabeleland South</option>
+                    <option value="midlands">Midlands</option>
+                  </select>
+                </div>
+
+                {/* Target Audience */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Target Audience
+                  </label>
+                  <select
+                    name="target_audience"
+                    value={formData.target_audience}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                  >
+                    <option value="all_cluster_leaders">All Cluster Leaders</option>
+                    <option value="all_members">All Members</option>
+                    <option value="specific_cluster">Specific Cluster</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Cluster Name (conditional) */}
+              {formData.target_audience === 'specific_cluster' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Cluster Name
+                  </label>
+                  <Input
+                    name="cluster_name"
+                    value={formData.cluster_name}
+                    onChange={handleInputChange}
+                    placeholder="Enter specific cluster name"
+                  />
+                </div>
+              )}
+            </div>
+          </form>
+        </div>
+
+        {/* Modal Footer - Fixed */}
+        <div className="flex justify-end space-x-3 p-6 border-t border-gray-200 flex-shrink-0 bg-gray-50">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            {loading ? "Creating..." : "Create Event"}
+          </Button>
+        </div>
       </div>
     </div>
   )

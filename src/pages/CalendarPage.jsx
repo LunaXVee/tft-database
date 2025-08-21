@@ -275,8 +275,8 @@ function CalendarPage() {
               ) : upcomingEvents.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-gray-500 mb-2">No upcoming events</div>
-                  <Button variant="outline" size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
+                  <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => setShowAddModal(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
                     Add Event
                   </Button>
                 </div>
