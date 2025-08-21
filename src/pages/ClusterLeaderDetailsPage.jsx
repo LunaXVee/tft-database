@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import DashboardLayout from "@/components/DashboardLayout"
+import { supabase } from "@/lib/supabase" // ADD THIS MISSING IMPORT!
+
 
 function ClusterLeaderDetailsPage() {
   const { id } = useParams()
