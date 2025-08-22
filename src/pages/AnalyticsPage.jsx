@@ -217,7 +217,7 @@ function AnalyticsPage() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <BarChart3 className="h-12 w-12 text-green-600 mx-auto mb-4" />
-          <div className="text-2xl font-bold text-green-700 mb-2">Loading Analytics...</div>
+          <div className="text-xl md:text-2xl font-bold text-green-700 mb-2">Loading Analytics...</div>
           <div className="text-gray-600">Processing member and cluster data...</div>
         </div>
       </div>
@@ -225,134 +225,110 @@ function AnalyticsPage() {
   }
 
   return (
-    
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex items-center space-x-4">
-              <BarChart3 className="h-8 w-8 text-green-600" />
-              <div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">Analytics Dashboard</h1>
-                <p className="text-gray-600">Comprehensive insights into TFT membership and performance</p>
-              </div>
+    <div className="space-y-4 md:space-y-6">
+      {/* Header - Mobile Optimized */}
+      <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+        <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+          <div className="flex items-center space-x-3">
+            <BarChart3 className="h-6 w-6 md:h-8 md:w-8 text-green-600" />
+            <div>
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800">Analytics Dashboard</h1>
+              <p className="text-gray-600 text-sm md:text-base">Comprehensive insights into TFT membership and performance</p>
             </div>
+          </div>
+          
+          {/* Filters - Responsive */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <select 
+              value={filters.view}
+              onChange={(e) => setFilters(prev => ({...prev, view: e.target.value}))}
+              className="px-2 md:px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+            >
+              <option value="Overview">Overview</option>
+              <option value="Members">Members</option>
+              <option value="Clusters">Clusters</option>
+            </select>
             
-            {/* Filters */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium text-gray-700">View:</label>
-                <select 
-                  value={filters.view}
-                  onChange={(e) => setFilters(prev => ({...prev, view: e.target.value}))}
-                  className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
-                >
-                  <option value="Overview">Overview</option>
-                  <option value="Members">Members</option>
-                  <option value="Clusters">Clusters</option>
-                </select>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium text-gray-700">Category:</label>
-                <select 
-                  value={filters.category}
-                  onChange={(e) => setFilters(prev => ({...prev, category: e.target.value}))}
-                  className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
-                >
-                  <option value="All Data">All Data</option>
-                  <option value="Active Members">Active Members</option>
-                  <option value="New Members">New Members</option>
-                </select>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium text-gray-700">View:</label>
-                <select 
-                  value={filters.timeframe}
-                  onChange={(e) => setFilters(prev => ({...prev, timeframe: e.target.value}))}
-                  className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
-                >
-                  <option value="This Month">This Month</option>
-                  <option value="Last Month">Last Month</option>
-                  <option value="This Year">This Year</option>
-                </select>
-              </div>
-              
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Apply Filters
-              </Button>
-            </div>
+            <select 
+              value={filters.timeframe}
+              onChange={(e) => setFilters(prev => ({...prev, timeframe: e.target.value}))}
+              className="px-2 md:px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+            >
+              <option value="This Month">This Month</option>
+              <option value="Last Month">Last Month</option>
+              <option value="This Year">This Year</option>
+            </select>
           </div>
         </div>
+      </div>
 
-        {/* Key Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="text-3xl font-bold text-gray-800">{analytics.totalMembers}</div>
-            <div className="text-sm text-gray-600 mt-1">Total Members</div>
-            <div className="text-xs text-green-600 mt-2">
-              {analytics.newMembersThisMonth > 0 ? `+${analytics.newMembersThisMonth} this month` : 'No new members'}
-            </div>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="text-3xl font-bold text-gray-800">{analytics.newMembersThisMonth}</div>
-            <div className="text-sm text-gray-600 mt-1">New Members This Month</div>
-            <div className="text-xs text-green-600 mt-2">
-              {analytics.newMembersLastMonth !== undefined && analytics.newMembersLastMonth > 0
-                ? `${analytics.newMembersThisMonth > analytics.newMembersLastMonth ? '+' : ''}${((analytics.newMembersThisMonth - analytics.newMembersLastMonth) / analytics.newMembersLastMonth * 100).toFixed(1)}% from last month`
-                : 'vs last month'
-              }
-            </div>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="text-3xl font-bold text-gray-800">{analytics.totalFarmArea}</div>
-            <div className="text-sm text-gray-600 mt-1">Total Farm Area(ha)</div>
-            <div className="text-xs text-green-600 mt-2">
-              {analytics.totalMembers > 0 ? `Avg: ${(analytics.totalFarmArea / analytics.totalMembers).toFixed(1)} ha/member` : 'No data'}
-            </div>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="text-3xl font-bold text-gray-800">{analytics.activeContracts}</div>
-            <div className="text-sm text-gray-600 mt-1">Active Contracts</div>
-            <div className="text-xs text-green-600 mt-2">
-              {analytics.totalMembers > 0 ? `${((analytics.activeContracts / analytics.totalMembers) * 100).toFixed(1)}% of members` : 'No data'}
-            </div>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="text-3xl font-bold text-gray-800">{analytics.activeClusters}</div>
-            <div className="text-sm text-gray-600 mt-1">Active Clusters</div>
-            <div className="text-xs text-gray-600 mt-2">
-              {analytics.totalMembers > 0 && analytics.activeClusters > 0 
-                ? `Avg: ${(analytics.totalMembers / analytics.activeClusters).toFixed(1)} members/cluster`
-                : 'No data'
-              }
-            </div>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="text-3xl font-bold text-gray-800">{analytics.provincesCovered}</div>
-            <div className="text-sm text-gray-600 mt-1">Provinces Covered</div>
-            <div className="text-xs text-green-600 mt-2">
-              {analytics.provincesCovered > 0 ? `${((analytics.provincesCovered / 10) * 100).toFixed(0)}% of Zimbabwe` : 'No coverage'}
-            </div>
+      {/* Key Metrics Cards - Mobile Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 md:gap-4">
+        <div className="bg-white p-3 md:p-6 rounded-lg shadow-md text-center">
+          <div className="text-xl md:text-3xl font-bold text-gray-800">{analytics.totalMembers}</div>
+          <div className="text-xs md:text-sm text-gray-600 mt-1">Total Members</div>
+          <div className="text-xs text-green-600 mt-1 md:mt-2">
+            {analytics.newMembersThisMonth > 0 ? `+${analytics.newMembersThisMonth} this month` : 'No new members'}
           </div>
         </div>
+        
+        <div className="bg-white p-3 md:p-6 rounded-lg shadow-md text-center">
+          <div className="text-xl md:text-3xl font-bold text-gray-800">{analytics.newMembersThisMonth}</div>
+          <div className="text-xs md:text-sm text-gray-600 mt-1">New This Month</div>
+          <div className="text-xs text-green-600 mt-1 md:mt-2">
+            {analytics.newMembersLastMonth !== undefined && analytics.newMembersLastMonth > 0
+              ? `${analytics.newMembersThisMonth > analytics.newMembersLastMonth ? '+' : ''}${((analytics.newMembersThisMonth - analytics.newMembersLastMonth) / analytics.newMembersLastMonth * 100).toFixed(1)}% from last month`
+              : 'vs last month'
+            }
+          </div>
+        </div>
+        
+        <div className="bg-white p-3 md:p-6 rounded-lg shadow-md text-center">
+          <div className="text-xl md:text-3xl font-bold text-gray-800">{analytics.totalFarmArea}</div>
+          <div className="text-xs md:text-sm text-gray-600 mt-1">Farm Area (ha)</div>
+          <div className="text-xs text-green-600 mt-1 md:mt-2">
+            {analytics.totalMembers > 0 ? `Avg: ${(analytics.totalFarmArea / analytics.totalMembers).toFixed(1)} ha/member` : 'No data'}
+          </div>
+        </div>
+        
+        <div className="bg-white p-3 md:p-6 rounded-lg shadow-md text-center">
+          <div className="text-xl md:text-3xl font-bold text-gray-800">{analytics.activeContracts}</div>
+          <div className="text-xs md:text-sm text-gray-600 mt-1">Active Contracts</div>
+          <div className="text-xs text-green-600 mt-1 md:mt-2">
+            {analytics.totalMembers > 0 ? `${((analytics.activeContracts / analytics.totalMembers) * 100).toFixed(1)}% of members` : 'No data'}
+          </div>
+        </div>
+        
+        <div className="bg-white p-3 md:p-6 rounded-lg shadow-md text-center">
+          <div className="text-xl md:text-3xl font-bold text-gray-800">{analytics.activeClusters}</div>
+          <div className="text-xs md:text-sm text-gray-600 mt-1">Active Clusters</div>
+          <div className="text-xs text-gray-600 mt-1 md:mt-2">
+            {analytics.totalMembers > 0 && analytics.activeClusters > 0 
+              ? `Avg: ${(analytics.totalMembers / analytics.activeClusters).toFixed(1)} members/cluster`
+              : 'No data'
+            }
+          </div>
+        </div>
+        
+        <div className="bg-white p-3 md:p-6 rounded-lg shadow-md text-center">
+          <div className="text-xl md:text-3xl font-bold text-gray-800">{analytics.provincesCovered}</div>
+          <div className="text-xs md:text-sm text-gray-600 mt-1">Provinces</div>
+          <div className="text-xs text-green-600 mt-1 md:mt-2">
+            {analytics.provincesCovered > 0 ? `${((analytics.provincesCovered / 10) * 100).toFixed(0)}% coverage` : 'No coverage'}
+          </div>
+        </div>
+      </div>
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Members by Province */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">Members by Province</h3>
-              <span className="text-sm text-gray-500">Geographic Distribution</span>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
+      {/* Charts Section - Mobile Responsive */}
+      <div className="space-y-4 md:space-y-6">
+        {/* Members by Province */}
+        <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base md:text-lg font-semibold text-gray-800">Members by Province</h3>
+            <span className="text-xs md:text-sm text-gray-500">Geographic Distribution</span>
+          </div>
+          <div className="h-64 md:h-80">
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData.membersByProvince}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
@@ -360,22 +336,25 @@ function AnalyticsPage() {
                   angle={-45}
                   textAnchor="end"
                   height={80}
-                  fontSize={12}
+                  fontSize={10}
+                  interval={0}
                 />
-                <YAxis />
+                <YAxis fontSize={10} />
                 <Tooltip />
                 <Bar dataKey="members" fill="#10B981" />
               </BarChart>
             </ResponsiveContainer>
           </div>
+        </div>
 
-          {/* Farm Type Distribution */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">Farm Type Distribution</h3>
-              <span className="text-sm text-gray-500">Members Category</span>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
+        {/* Farm Type Distribution */}
+        <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base md:text-lg font-semibold text-gray-800">Farm Type Distribution</h3>
+            <span className="text-xs md:text-sm text-gray-500">Members Category</span>
+          </div>
+          <div className="h-64 md:h-80">
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={chartData.farmTypeDistribution}
@@ -383,9 +362,10 @@ function AnalyticsPage() {
                   cy="50%"
                   labelLine={false}
                   label={({name, percentage}) => `${name} ${percentage}%`}
-                  outerRadius={80}
+                  outerRadius={window.innerWidth < 768 ? 60 : 80}
                   fill="#8884d8"
                   dataKey="value"
+                  fontSize={window.innerWidth < 768 ? 10 : 12}
                 >
                   {chartData.farmTypeDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -398,94 +378,134 @@ function AnalyticsPage() {
         </div>
 
         {/* Member Growth Trend */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Members Growth Trend</h3>
-            <span className="text-sm text-gray-500">Monthly Registration Data</span>
+            <h3 className="text-base md:text-lg font-semibold text-gray-800">Member Growth Trend</h3>
+            <span className="text-xs md:text-sm text-gray-500">Monthly Registration Data</span>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData.memberGrowthTrend}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="week" />
-              <YAxis />
-              <Tooltip />
-              <Line 
-                type="monotone" 
-                dataKey="members" 
-                stroke="#10B981" 
-                strokeWidth={3}
-                dot={{ fill: '#10B981', strokeWidth: 2, r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Top Performing Clusters */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-800">Top Performing Clusters</h3>
-            <span className="text-sm text-gray-500">By Member Count & Contract Rate</span>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 border-b">
-                  <th className="text-left p-4 font-medium text-gray-700">Cluster Name</th>
-                  <th className="text-left p-4 font-medium text-gray-700">Leader</th>
-                  <th className="text-left p-4 font-medium text-gray-700">Province</th>
-                  <th className="text-center p-4 font-medium text-gray-700">Members</th>
-                  <th className="text-center p-4 font-medium text-gray-700">Contracts</th>
-                  <th className="text-center p-4 font-medium text-gray-700">Contract Rate</th>
-                  <th className="text-center p-4 font-medium text-gray-700">Total Area (ha)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {chartData.topClusters.map((cluster, index) => (
-                  <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="p-4 font-medium text-gray-900">{cluster.clusterName}</td>
-                    <td className="p-4 text-gray-700">{cluster.leader}</td>
-                    <td className="p-4 text-gray-700">{cluster.province}</td>
-                    <td className="p-4 text-center text-blue-600 font-medium">{cluster.members}</td>
-                    <td className="p-4 text-center text-green-600 font-medium">{cluster.contracts}</td>
-                    <td className="p-4 text-center">
-                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                        {cluster.contractRate}%
-                      </span>
-                    </td>
-                    <td className="p-4 text-center text-gray-700 font-medium">{cluster.totalArea}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Export Actions */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">Export Analytics</h3>
-              <p className="text-gray-600 text-sm">Download comprehensive reports and analytics data</p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Export as CSV
-              </Button>
-              <Button variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Export as PDF
-              </Button>
-              <Button className="bg-green-600 hover:bg-green-700">
-                <Download className="h-4 w-4 mr-2" />
-                Generate Report
-              </Button>
-            </div>
+          <div className="h-64 md:h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData.memberGrowthTrend}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="week" fontSize={10} />
+                <YAxis fontSize={10} />
+                <Tooltip />
+                <Line 
+                  type="monotone" 
+                  dataKey="members" 
+                  stroke="#10B981" 
+                  strokeWidth={2}
+                  dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
-    
+
+      {/* Top Performing Clusters - Mobile Cards / Desktop Table */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base md:text-lg font-semibold text-gray-800">Top Performing Clusters</h3>
+            <span className="text-xs md:text-sm text-gray-500">By Member Count & Contract Rate</span>
+          </div>
+        </div>
+        
+        {/* Mobile Cards View */}
+        <div className="block md:hidden">
+          {chartData.topClusters.map((cluster, index) => (
+            <div key={index} className="border-b border-gray-200 p-4 last:border-b-0">
+              <div className="space-y-3">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-medium text-gray-900">{cluster.clusterName}</h4>
+                    <p className="text-sm text-gray-600">{cluster.leader}</p>
+                    <p className="text-xs text-gray-500">{cluster.province}</p>
+                  </div>
+                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                    {cluster.contractRate}%
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div>
+                    <div className="text-lg font-bold text-blue-600">{cluster.members}</div>
+                    <div className="text-xs text-gray-600">Members</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-green-600">{cluster.contracts}</div>
+                    <div className="text-xs text-gray-600">Contracts</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-700">{cluster.totalArea}</div>
+                    <div className="text-xs text-gray-600">Hectares</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 border-b">
+                <th className="text-left p-4 font-medium text-gray-700">Cluster Name</th>
+                <th className="text-left p-4 font-medium text-gray-700">Leader</th>
+                <th className="text-left p-4 font-medium text-gray-700">Province</th>
+                <th className="text-center p-4 font-medium text-gray-700">Members</th>
+                <th className="text-center p-4 font-medium text-gray-700">Contracts</th>
+                <th className="text-center p-4 font-medium text-gray-700">Contract Rate</th>
+                <th className="text-center p-4 font-medium text-gray-700">Total Area (ha)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chartData.topClusters.map((cluster, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="p-4 font-medium text-gray-900">{cluster.clusterName}</td>
+                  <td className="p-4 text-gray-700">{cluster.leader}</td>
+                  <td className="p-4 text-gray-700">{cluster.province}</td>
+                  <td className="p-4 text-center text-blue-600 font-medium">{cluster.members}</td>
+                  <td className="p-4 text-center text-green-600 font-medium">{cluster.contracts}</td>
+                  <td className="p-4 text-center">
+                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                      {cluster.contractRate}%
+                    </span>
+                  </td>
+                  <td className="p-4 text-center text-gray-700 font-medium">{cluster.totalArea}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Export Actions - Mobile Optimized */}
+      <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+          <div>
+            <h3 className="text-base md:text-lg font-semibold text-gray-800">Export Analytics</h3>
+            <p className="text-gray-600 text-sm">Download comprehensive reports and analytics data</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <Button variant="outline" className="w-full sm:w-auto">
+              <Download className="h-4 w-4 mr-2" />
+              CSV
+            </Button>
+            <Button variant="outline" className="w-full sm:w-auto">
+              <Download className="h-4 w-4 mr-2" />
+              PDF
+            </Button>
+            <Button className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+              <Download className="h-4 w-4 mr-2" />
+              Report
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
