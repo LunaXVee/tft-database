@@ -16,7 +16,7 @@ export default function SignInPage() {
             TFT Database
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Tobacco Farmers Trust Management Portal
+            The Farmers Talk Management Portal
           </p>
           <p className="mt-1 text-xs text-gray-500">
             For Administrators and Cluster Leaders Only
@@ -40,8 +40,16 @@ export default function SignInPage() {
                 footerActionLink: "text-green-600 hover:text-green-700",
                 identityPreviewText: "text-gray-700",
                 formFieldInput: "border-gray-300 focus:border-green-500 focus:ring-green-500"
+              },
+              layout: {
+                showOptionalFields: true,
+                termsPageUrl: undefined,
+                privacyPageUrl: undefined
               }
             }}
+            signUpUrl="/sign-up"
+            forceRedirectUrl="/dashboard"
+            fallbackRedirectUrl="/dashboard"
           />
         </div>
 
