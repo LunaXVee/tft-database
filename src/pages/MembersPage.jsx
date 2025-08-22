@@ -11,7 +11,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { supabase } from "@/lib/supabase"
-import DashboardLayout from "@/components/DashboardLayout"
 
 function MembersPage() {
   const navigate = useNavigate()

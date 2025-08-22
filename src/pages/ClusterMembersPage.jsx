@@ -74,17 +74,14 @@ function ClusterMembersPage() {
 
   if (loading) {
     return (
-      <DashboardLayout>
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold text-green-700">Loading cluster members...</h2>
           <p className="text-gray-600 mt-2">Fetching member data...</p>
         </div>
-      </DashboardLayout>
     )
   }
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Cluster Header */}
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -301,7 +298,6 @@ function ClusterMembersPage() {
           )}
         </div>
       </div>
-    </DashboardLayout>
   )
 }
 

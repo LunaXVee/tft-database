@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import DashboardLayout from "@/components/DashboardLayout"
 import { supabase } from "@/lib/supabase"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts'
 import { TrendingUp, Users, Building, MapPin, Calendar, Filter, Download, BarChart3 } from 'lucide-react'
@@ -72,16 +71,35 @@ function AnalyticsPage() {
       const activeClusters = clusters?.length || 0
       const provincesCovered = new Set(members?.map(m => m.province).filter(Boolean)).size || 0
       
-      // Calculate new members this month (mock data for now)
-      const newMembersThisMonth = Math.floor(totalMembers * 0.1) // 10% of total as new this month
+      // Calculate REAL new members this month
+      const currentDate = new Date()
+      const currentMonth = currentDate.getMonth()
+      const currentYear = currentDate.getFullYear()
+      
+      const newMembersThisMonth = members?.filter(member => {
+        if (!member.created_at) return false
+        const memberDate = new Date(member.created_at)
+        return memberDate.getMonth() === currentMonth && memberDate.getFullYear() === currentYear
+      }).length || 0
+
+      // Calculate previous month for growth comparison
+      const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1
+      const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear
+      
+      const newMembersLastMonth = members?.filter(member => {
+        if (!member.created_at) return false
+        const memberDate = new Date(member.created_at)
+        return memberDate.getMonth() === lastMonth && memberDate.getFullYear() === lastMonthYear
+      }).length || 0
 
       setAnalytics({
         totalMembers,
-        totalFarmArea: Math.round(totalFarmArea * 10) / 10, // Round to 1 decimal
+        totalFarmArea: Math.round(totalFarmArea * 10) / 10,
         activeContracts,
         activeClusters,
         provincesCovered,
-        newMembersThisMonth
+        newMembersThisMonth,
+        newMembersLastMonth // For growth calculation
       })
 
       // Process data for charts
@@ -123,37 +141,68 @@ function AnalyticsPage() {
       percentage: Math.round((count / members.length) * 100)
     }))
 
-    // Member Growth Trend (mock data based on current members)
-    const memberGrowthTrend = [
-      { week: 'Week 1', members: Math.floor(members.length * 0.2) },
-      { week: 'Week 2', members: Math.floor(members.length * 0.4) },
-      { week: 'Week 3', members: Math.floor(members.length * 0.7) },
-      { week: 'Week 4', members: members.length }
-    ]
+    // REAL Member Growth Trend based on created_at dates
+    const memberGrowthTrend = []
+    const currentDate = new Date()
+    const currentMonth = currentDate.getMonth()
+    const currentYear = currentDate.getFullYear()
+    
+    // Get data for last 4 weeks of current month
+    for (let week = 1; week <= 4; week++) {
+      const weekStart = new Date(currentYear, currentMonth, (week - 1) * 7 + 1)
+      const weekEnd = new Date(currentYear, currentMonth, week * 7)
+      
+      const weekMembers = members?.filter(member => {
+        if (!member.created_at) return false
+        const memberDate = new Date(member.created_at)
+        return memberDate >= weekStart && memberDate <= weekEnd
+      }).length || 0
+      
+      memberGrowthTrend.push({
+        week: `Week ${week}`,
+        members: weekMembers
+      })
+    }
 
-    // Top Performing Clusters
+    // REAL Top Performing Clusters with actual data
     const clusterMemberCount = {}
+    const clusterFarmArea = {}
+    const clusterActiveContracts = {}
+    
     members?.forEach(member => {
       if (member.cluster) {
+        // Count members
         clusterMemberCount[member.cluster] = (clusterMemberCount[member.cluster] || 0) + 1
+        
+        // Sum farm area
+        clusterFarmArea[member.cluster] = (clusterFarmArea[member.cluster] || 0) + (parseFloat(member.farm_size) || 0)
+        
+        // Count active contracts
+        if (member.contract_status === 'Active') {
+          clusterActiveContracts[member.cluster] = (clusterActiveContracts[member.cluster] || 0) + 1
+        }
       }
     })
 
     const topClusters = clusters?.map(cluster => {
       const memberCount = clusterMemberCount[cluster.cluster_name] || 0
-      const contractRate = memberCount > 0 ? Math.round((memberCount * 0.8) / memberCount * 100) : 0 // Mock 80% contract rate
-      const totalArea = memberCount * 15.5 // Mock average 15.5 hectares per member
+      const activeContracts = clusterActiveContracts[cluster.cluster_name] || 0
+      const contractRate = memberCount > 0 ? Math.round((activeContracts / memberCount) * 100) : 0
+      const totalArea = clusterFarmArea[cluster.cluster_name] || 0
       
       return {
         clusterName: cluster.cluster_name,
         leader: `${cluster.first_name} ${cluster.last_name}`,
         province: cluster.province,
         members: memberCount,
-        contracts: Math.floor(memberCount * 0.8), // Mock 80% have contracts
+        contracts: activeContracts,
         contractRate: contractRate,
         totalArea: Math.round(totalArea * 10) / 10
       }
-    }).sort((a, b) => b.members - a.members).slice(0, 4) || []
+    })
+    .filter(cluster => cluster.members > 0) // Only show clusters with members
+    .sort((a, b) => b.members - a.members) // Sort by member count
+    .slice(0, 4) || [] // Top 4 clusters
 
     setChartData({
       membersByProvince,
@@ -165,20 +214,18 @@ function AnalyticsPage() {
 
   if (loading) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <BarChart3 className="h-12 w-12 text-green-600 mx-auto mb-4" />
-            <div className="text-2xl font-bold text-green-700 mb-2">Loading Analytics...</div>
-            <div className="text-gray-600">Processing member and cluster data...</div>
-          </div>
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <BarChart3 className="h-12 w-12 text-green-600 mx-auto mb-4" />
+          <div className="text-2xl font-bold text-green-700 mb-2">Loading Analytics...</div>
+          <div className="text-gray-600">Processing member and cluster data...</div>
         </div>
-      </DashboardLayout>
+      </div>
     )
   }
 
   return (
-    <DashboardLayout>
+    
       <div className="space-y-6">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -245,37 +292,55 @@ function AnalyticsPage() {
           <div className="bg-white p-6 rounded-lg shadow-md text-center">
             <div className="text-3xl font-bold text-gray-800">{analytics.totalMembers}</div>
             <div className="text-sm text-gray-600 mt-1">Total Members</div>
-            <div className="text-xs text-green-600 mt-2">+12 this month</div>
+            <div className="text-xs text-green-600 mt-2">
+              {analytics.newMembersThisMonth > 0 ? `+${analytics.newMembersThisMonth} this month` : 'No new members'}
+            </div>
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-md text-center">
             <div className="text-3xl font-bold text-gray-800">{analytics.newMembersThisMonth}</div>
             <div className="text-sm text-gray-600 mt-1">New Members This Month</div>
-            <div className="text-xs text-green-600 mt-2">+66.8% of members</div>
+            <div className="text-xs text-green-600 mt-2">
+              {analytics.newMembersLastMonth !== undefined && analytics.newMembersLastMonth > 0
+                ? `${analytics.newMembersThisMonth > analytics.newMembersLastMonth ? '+' : ''}${((analytics.newMembersThisMonth - analytics.newMembersLastMonth) / analytics.newMembersLastMonth * 100).toFixed(1)}% from last month`
+                : 'vs last month'
+              }
+            </div>
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-md text-center">
             <div className="text-3xl font-bold text-gray-800">{analytics.totalFarmArea}</div>
             <div className="text-sm text-gray-600 mt-1">Total Farm Area(ha)</div>
-            <div className="text-xs text-green-600 mt-2">+2.3% this year</div>
+            <div className="text-xs text-green-600 mt-2">
+              {analytics.totalMembers > 0 ? `Avg: ${(analytics.totalFarmArea / analytics.totalMembers).toFixed(1)} ha/member` : 'No data'}
+            </div>
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-md text-center">
             <div className="text-3xl font-bold text-gray-800">{analytics.activeContracts}</div>
             <div className="text-sm text-gray-600 mt-1">Active Contracts</div>
-            <div className="text-xs text-green-600 mt-2">+66.8% of members</div>
+            <div className="text-xs text-green-600 mt-2">
+              {analytics.totalMembers > 0 ? `${((analytics.activeContracts / analytics.totalMembers) * 100).toFixed(1)}% of members` : 'No data'}
+            </div>
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-md text-center">
             <div className="text-3xl font-bold text-gray-800">{analytics.activeClusters}</div>
             <div className="text-sm text-gray-600 mt-1">Active Clusters</div>
-            <div className="text-xs text-gray-600 mt-2">No change</div>
+            <div className="text-xs text-gray-600 mt-2">
+              {analytics.totalMembers > 0 && analytics.activeClusters > 0 
+                ? `Avg: ${(analytics.totalMembers / analytics.activeClusters).toFixed(1)} members/cluster`
+                : 'No data'
+              }
+            </div>
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-md text-center">
             <div className="text-3xl font-bold text-gray-800">{analytics.provincesCovered}</div>
             <div className="text-sm text-gray-600 mt-1">Provinces Covered</div>
-            <div className="text-xs text-green-600 mt-2">+1 new province</div>
+            <div className="text-xs text-green-600 mt-2">
+              {analytics.provincesCovered > 0 ? `${((analytics.provincesCovered / 10) * 100).toFixed(0)}% of Zimbabwe` : 'No coverage'}
+            </div>
           </div>
         </div>
 
@@ -420,7 +485,7 @@ function AnalyticsPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    
   )
 }
 

@@ -179,17 +179,14 @@ function ClusterLeadersPage() {
 
   if (loading) {
     return (
-      <DashboardLayout>
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold text-green-700">Loading cluster leaders...</h2>
           <p className="text-gray-600 mt-2">Fetching cluster leadership data from database...</p>
         </div>
-      </DashboardLayout>
     )
   }
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header with Search */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -369,7 +366,6 @@ function ClusterLeadersPage() {
           )}
         </div>
       </div>
-    </DashboardLayout>
   )
 }
 

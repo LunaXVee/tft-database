@@ -515,9 +515,7 @@ function ExportPage() {
   // Render different layouts based on dashboard mode
   if (isDashboardMode) {
     return (
-      <DashboardLayout>
         <ExportContent />
-      </DashboardLayout>
     )
   }
 

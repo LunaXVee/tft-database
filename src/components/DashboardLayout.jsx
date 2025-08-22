@@ -1,186 +1,115 @@
-import { useState } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Calendar as CalendarIcon } from 'lucide-react'
+// src/components/DashboardLayout.jsx - Correct layout component
+import { useUser, UserButton } from '@clerk/clerk-react'
+import { Link, useLocation } from 'react-router-dom'
 
-function DashboardLayout({ children }) {
-  const navigate = useNavigate()
+export default function DashboardLayout({ children }) {
+  const { user } = useUser()
   const location = useLocation()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  
-  // Fixed navigationItems array with consistent structure
-  const navigationItems = [
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: '📊',
-      path: '/dashboard'
-    },
-    {
-      id: 'cluster-leaders',
-      label: 'Cluster Leaders',
-      icon: '👥',
-      path: '/dashboard/cluster-leaders'
-    },
-    {
-      id: 'members-overview',
-      label: 'Members Overview',
-      icon: '👤',
-      path: '/dashboard/members'
-    },
-    {
-      id: 'add-member',
-      label: 'Add Member',
-      icon: '➕',
-      path: '/dashboard/add-member'
-    },
-    {
-      id: 'calendar',
-      label: 'Calendar',
-      icon: '📅', // Using emoji for consistency
-      path: '/dashboard/calendar'
-    },
-    {
-        id: 'analytics',  // ADD THIS NEW ITEM
-        label: 'Analytics Overview',
-        icon: '📈',
-        path: '/dashboard/analytics'
-      },
-    {
-      id: 'export-data',
-      label: 'Export Data',
-      icon: '📄',
-      path: '/dashboard/export'
-    }
+  const userRole = user?.publicMetadata?.role || 'user'
+  const userName = user?.firstName || 'User'
+
+  // Navigation items based on role
+  const navigation = [
+    { name: 'Dashboard', href: '/dashboard', icon: '📊', roles: ['admin', 'cluster_leader'] },
+    { name: 'Members Overview', href: '/members', icon: '👥', roles: ['admin', 'cluster_leader'] },
+    { name: 'Cluster Leaders', href: '/cluster-leaders', icon: '👨‍💼', roles: ['admin'] },
+    { name: 'Add Member', href: '/add-member', icon: '➕', roles: ['admin', 'cluster_leader'] },
+    { name: 'Analytics', href: '/analytics', icon: '📈', roles: ['admin', 'cluster_leader'] },
+    { name: 'Calendar', href: '/calendar', icon: '📅', roles: ['admin', 'cluster_leader'] },
+    { name: 'Export Data', href: '/export', icon: '💾', roles: ['admin'] },
   ]
 
-  const isActiveRoute = (path) => {
-    return location.pathname === path || 
-           (path === '/dashboard/members' && location.pathname === '/dashboard')
-  }
-
-  const handleNavigation = (path) => {
-    navigate(path)
-    setSidebarOpen(false) // Close sidebar on mobile after navigation
-  }
+  // Filter navigation based on user role
+  const allowedNavigation = navigation.filter(item => item.roles.includes(userRole))
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
       {/* Sidebar */}
-      <div className={`
-        fixed lg:static inset-y-0 left-0 z-50
-        w-64 bg-white shadow-lg flex flex-col
-        transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
-        {/* Logo/Header */}
-        <div className="p-4 lg:p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="bg-green-600 p-2 rounded-lg">
-                <span className="text-white font-bold text-lg">🚜</span>
+      <div className="hidden md:flex md:w-64 md:flex-col">
+        <div className="flex flex-col flex-grow pt-5 bg-white overflow-y-auto border-r">
+          {/* Logo */}
+          <div className="flex items-center flex-shrink-0 px-4">
+            <div className="h-8 w-8 bg-green-600 rounded flex items-center justify-center">
+              <span className="text-white font-bold">TFT</span>
+            </div>
+            <div className="ml-3">
+              <p className="text-lg font-semibold text-gray-900">TFT Database</p>
+              <p className="text-xs text-gray-500">Farmers Management</p>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="mt-8 flex-grow flex flex-col">
+            <nav className="flex-1 px-2 space-y-1">
+              {allowedNavigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`${
+                    location.pathname === item.href
+                      ? 'bg-green-100 text-green-900 border-r-2 border-green-500'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  } group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors`}
+                >
+                  <span className="mr-3 text-lg">{item.icon}</span>
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* User Info */}
+          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+            <div className="flex items-center w-full">
+              <div className="flex-shrink-0">
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8"
+                    }
+                  }}
+                />
               </div>
-              <div>
-                <h1 className="text-lg lg:text-xl font-bold text-gray-800">TFT</h1>
-                <p className="text-xs lg:text-sm text-gray-600">The Farmers Talk</p>
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-medium text-gray-900">{userName}</p>
+                <p className="text-xs text-gray-500 capitalize">{userRole}</p>
               </div>
             </div>
-            {/* Close button for mobile */}
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 p-4 overflow-y-auto">
-          <div className="space-y-2">
-            {navigationItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNavigation(item.path)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                  isActiveRoute(item.path)
-                    ? 'bg-green-100 text-green-800 font-medium'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
-                }`}
-              >
-                <span className="text-lg">{item.icon}</span>
-                <span className="text-sm lg:text-base">{item.label}</span>
-              </button>
-            ))}
-          </div>
-        </nav>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="text-xs lg:text-sm text-gray-500">
-            <p>Member Database</p>
-            <p>v1.0.0</p>
           </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-4 lg:px-6 py-4">
+      {/* Main Content */}
+      <div className="flex flex-col flex-1">
+        {/* Top Header */}
+        <div className="bg-white shadow-sm border-b px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              {/* Mobile menu button */}
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              
-              <div>
-                <h2 className="text-xl lg:text-2xl font-semibold text-gray-800">
-                  {navigationItems.find(item => isActiveRoute(item.path))?.label || 'Dashboard'}
-                </h2>
-                <p className="text-gray-600 mt-1 hidden sm:block">
-                   Manage your members
-                </p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {navigation.find(item => item.href === location.pathname)?.name || 'Dashboard'}
+              </h1>
             </div>
-            
-            <div className="flex items-center space-x-2 lg:space-x-4">
-              <div className="text-xs lg:text-sm text-gray-500 hidden sm:block">
-                Welcome back, Admin
-              </div>
-              <Button 
-                variant="outline"
-                onClick={() => navigate('/')}
-                className="text-xs lg:text-sm px-2 lg:px-4"
-              >
-                <span className="hidden sm:inline">Back to Home</span>
-                <span className="sm:hidden">Home</span>
-              </Button>
+            <div className="flex items-center space-x-4">
+              <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium capitalize">
+                {userRole.replace('_', ' ')}
+              </span>
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8"
+                  }
+                }}
+                afterSignOutUrl="/sign-in"
+              />
             </div>
           </div>
-        </header>
+        </div>
 
         {/* Page Content */}
-        <main className="flex-1 p-4 lg:p-6 overflow-x-hidden">
+        <main className="flex-1 p-6">
           {children}
         </main>
       </div>
     </div>
   )
 }
-
-export default DashboardLayout

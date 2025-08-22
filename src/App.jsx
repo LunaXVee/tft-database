@@ -1,62 +1,144 @@
+// src/App.jsx - Complete with all pages
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import HomePage from "./pages/HomePage"
-import AddMemberPage from "./pages/AddMemberPage"
-import MembersPage from "./pages/MembersPage"
-import ExportPage from "./pages/ExportPage"
-import MemberDetailsPage from "./pages/MemberDetailsPage"  // Add this import
-import EditMemberPage from "./pages/EditMemberPage"
-import DashboardPage from "./pages/DashboardPage"
-import ClusterLeadersPage from "./pages/ClusterLeadersPage"
-import ClusterLeaderDetailsPage from "./pages/ClusterLeaderDetailsPage"
-import AddClusterLeaderPage from "./pages/AddClusterLeaderPage"
-import EditClusterLeaderPage from "./pages/EditClusterLeaderPage"
-import ClusterMembersPage from "./pages/ClusterMembersPage"
-import CalendarPage from "./pages/CalendarPage" // Add calendar import
-import AnalyticsPage from "./pages/AnalyticsPage"
+import { ClerkProvider } from '@clerk/clerk-react'
 
+// Authentication Pages
+import SignInPage from "./pages/SignInPage"
+import SignUpPage from "./pages/SignUpPage"
+import AccessDeniedPage from "./pages/AccessDeniedPage"  // Use the combined access denied page
+
+// Protected Components
+import ProtectedRoute from "./components/ProtectedRoute"
+import DashboardLayout from "./components/DashboardLayout"
+
+// All Page Components
+import DashboardPage from "./pages/DashboardPage"
+import MembersPage from "./pages/MembersPage"
+import AnalyticsPage from "./pages/AnalyticsPage"
+import CalendarPage from "./pages/CalendarPage"
+import AddMemberPage from "./pages/AddMemberPage"
+import MemberDetailsPage from "./pages/MemberDetailsPage"
+import EditMemberPage from "./pages/EditMemberPage"
+import ClusterLeadersPage from "./pages/ClusterLeadersPage"
+import ClusterMembersPage from "./pages/ClusterMembersPage"
+import ExportPage from "./pages/ExportPage"
+
+// Get Clerk publishable key
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+
+if (!clerkPubKey) {
+  throw new Error("Missing Clerk Publishable Key")
+}
 
 function App() {
   return (
-    <BrowserRouter>
-     <Routes>
-              {/* Dashboard Routes */}
+    <ClerkProvider publishableKey={clerkPubKey}>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Authentication Routes */}
+          <Route path="/sign-in/*" element={<SignInPage />} />
+          <Route path="/sign-up/*" element={<SignUpPage />} />
+          <Route path="/access-denied" element={<AccessDeniedPage />} />
+          <Route path="/unauthorized" element={<AccessDeniedPage />} />
+          <Route path="/no-portal-access" element={<AccessDeniedPage />} />
 
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+          {/* Protected Routes - All wrapped in DashboardLayout */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <DashboardPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <DashboardPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
 
-                  {/* Calendar Routes */}
-          <Route path="/dashboard/calendar" element={<CalendarPage />} />
+          {/* Members Management */}
+          <Route path="/members" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <MembersPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/add-member" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <AddMemberPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/member/:id" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <MemberDetailsPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/member/:id/edit" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <EditMemberPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
 
-        {/* Cluster Leader Routes */}
+          {/* Cluster Leaders Management (Admin Only) */}
+          <Route path="/cluster-leaders" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <ClusterLeadersPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          {/* Cluster Members (for cluster leaders) */}
+          <Route path="/cluster-members" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <ClusterMembersPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
 
-          <Route path="/dashboard/cluster-leaders" element={<ClusterLeadersPage />} />
-          <Route path="/dashboard/add-cluster-leader" element={<AddClusterLeaderPage />} />
-          <Route path="/dashboard/cluster-leader/:id" element={<ClusterLeaderDetailsPage />} />
-          <Route path="/dashboard/cluster-leader/:id/edit" element={<EditClusterLeaderPage />} />
+          {/* Analytics */}
+          <Route path="/analytics" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <AnalyticsPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
 
-        {/* Cluster Members Routes */}
+          {/* Calendar */}
+          <Route path="/calendar" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <CalendarPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
 
-          <Route path="/dashboard/cluster/:clusterName/members" element={<ClusterMembersPage />} />
-
-        {/* Member Routes */}
-
-          <Route path="/dashboard/members" element={<MembersPage />} />
-          <Route path="/dashboard/add-member" element={<AddMemberPage />} />
-          <Route path="/dashboard/export" element={<ExportPage />} />
-
-                  {/* Legacy Routes (for backward compatibility) */}
-
-          <Route path="/add-member" element={<AddMemberPage />} />
-          <Route path="/members" element={<MembersPage />} />
-          <Route path="/export" element={<ExportPage />} />
-          <Route path="/member/:id" element={<MemberDetailsPage />} />
-          <Route path="/member/:id/edit" element={<EditMemberPage />} />
-
-          <Route path="/dashboard/analytics" element={<AnalyticsPage />} />
-
-</Routes>
-
-    </BrowserRouter>
+          {/* Export (Admin Only) */}
+          <Route path="/export" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <ExportPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </BrowserRouter>
+    </ClerkProvider>
   )
 }
 

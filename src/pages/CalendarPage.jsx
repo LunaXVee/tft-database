@@ -139,7 +139,6 @@ function CalendarPage() {
   const upcomingEvents = getUpcomingEvents()
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Calendar Header */}
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -340,7 +339,6 @@ function CalendarPage() {
           onEventAdded={fetchEvents}
         />
       </div>
-    </DashboardLayout>
   )
 }
 

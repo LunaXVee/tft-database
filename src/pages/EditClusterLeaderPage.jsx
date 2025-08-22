@@ -145,19 +145,16 @@ function EditClusterLeaderPage() {
   // Show loading state
   if (loading) {
     return (
-      <DashboardLayout>
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
           <h2 className="text-2xl font-bold text-green-700 mb-4">Loading cluster leader data...</h2>
           <p className="text-gray-600">Please wait while we fetch the leader information.</p>
         </div>
-      </DashboardLayout>
     )
   }
 
   // Show error if leader not found
   if (!leader) {
     return (
-      <DashboardLayout>
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Cluster Leader Not Found</h2>
           <p className="text-gray-600 mb-4">The cluster leader you're trying to edit doesn't exist.</p>
@@ -165,12 +162,10 @@ function EditClusterLeaderPage() {
             ← Back to Cluster Leaders
           </Button>
         </div>
-      </DashboardLayout>
     )
   }
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header Card */}
         <div className="bg-white p-6 rounded-lg shadow-md">
@@ -195,7 +190,6 @@ function EditClusterLeaderPage() {
           />
         </div>
       </div>
-    </DashboardLayout>
   )
 }
 

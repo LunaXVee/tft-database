@@ -89,20 +89,17 @@ function ClusterLeaderDetailsPage() {
 
   if (loading) {
     return (
-      <DashboardLayout>
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="text-2xl font-bold text-green-700 mb-4">Loading cluster leader details...</div>
             <div className="text-gray-600">Fetching leadership information...</div>
           </div>
         </div>
-      </DashboardLayout>
     )
   }
 
   if (!leader) {
     return (
-      <DashboardLayout>
         <div className="bg-white rounded-lg shadow-md p-8 text-center">
           <div className="text-6xl mb-4">❌</div>
           <h2 className="text-2xl font-bold text-red-600 mb-4">Cluster Leader Not Found</h2>
@@ -114,12 +111,10 @@ function ClusterLeaderDetailsPage() {
             👥 Back to Cluster Leaders
           </Button>
         </div>
-      </DashboardLayout>
     )
   }
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -322,7 +317,6 @@ function ClusterLeaderDetailsPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
   )
 }
 
