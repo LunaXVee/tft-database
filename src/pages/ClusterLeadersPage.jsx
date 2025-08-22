@@ -202,7 +202,7 @@ function ClusterLeadersPage() {
               className="w-full lg:w-80"
             />
             <Button 
-              onClick={() => navigate('/dashboard/add-cluster-leader')}
+              onClick={() => navigate('/add-cluster-leader')}
               className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap"
             >
               + Add New Cluster Leader
@@ -271,7 +271,7 @@ function ClusterLeadersPage() {
                             <div className="text-lg mb-2">👥 No cluster leaders yet</div>
                             <div>Start by adding your first cluster leader</div>
                             <Button 
-                              onClick={() => navigate('/dashboard/add-cluster-leader')}
+                              onClick={() => navigate('/add-cluster-leader')}
                               className="mt-3 bg-green-600 hover:bg-green-700 text-white"
                             >
                               Add First Cluster Leader
@@ -286,7 +286,7 @@ function ClusterLeadersPage() {
                     <TableRow key={leader.id} className="hover:bg-gray-50">
                       <TableCell>
                         <button 
-                          onClick={() => navigate(`/dashboard/cluster-leader/${leader.id}`)}
+                          onClick={() => navigate(`/cluster-leader/${leader.id}`)}
                           className="font-medium text-blue-600 hover:text-blue-800 hover:underline text-left"
                         >
                           {leader.first_name} {leader.last_name}
@@ -327,7 +327,7 @@ function ClusterLeadersPage() {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => navigate(`/dashboard/cluster-leader/${leader.id}/edit`)}
+                            onClick={() => navigate(`/cluster-leader/${leader.id}/edit`)}
                             className="text-blue-600 border-blue-200 hover:bg-blue-50"
                           >
                             Edit

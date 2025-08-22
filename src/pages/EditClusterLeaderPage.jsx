@@ -30,7 +30,8 @@ function EditClusterLeaderPage() {
       if (error) {
         console.error("❌ Error fetching cluster leader:", error)
         alert("Failed to load cluster leader data")
-        navigate('/dashboard/cluster-leaders')
+        navigate("/cluster-leaders")
+
         return
       }
 
@@ -40,7 +41,8 @@ function EditClusterLeaderPage() {
     } catch (err) {
       console.error("❌ Fetch error:", err)
       alert("Error loading cluster leader data")
-      navigate('/dashboard/cluster-leaders')
+      navigate("/cluster-leaders")
+
     } finally {
       setLoading(false)
     }
@@ -102,7 +104,7 @@ function EditClusterLeaderPage() {
       alert("🎉 Cluster leader updated successfully!")
       
       // Navigate back to leader details
-      navigate(`/dashboard/cluster-leader/${id}`)
+      navigate(`/cluster-leader/${id}`)
       
     } catch (err) {
       console.error("❌ Update error:", err)
@@ -158,7 +160,8 @@ function EditClusterLeaderPage() {
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Cluster Leader Not Found</h2>
           <p className="text-gray-600 mb-4">The cluster leader you're trying to edit doesn't exist.</p>
-          <Button onClick={() => navigate('/dashboard/cluster-leaders')}>
+          <Button onClick={() => navigate("/cluster-leaders")
+}>
             ← Back to Cluster Leaders
           </Button>
         </div>

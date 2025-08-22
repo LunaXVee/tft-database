@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import ClusterLeaderForm from "@/components/ClusterLeaderForm"
 import { supabase } from "@/lib/supabase"
-import DashboardLayout from "@/components/DashboardLayout"
 
 function AddClusterLeaderPage() {
   const navigate = useNavigate()
@@ -66,7 +65,7 @@ function AddClusterLeaderPage() {
       alert("🎉 Cluster leader registered successfully!")
       
       // Navigate to the cluster leaders directory
-      navigate("/dashboard/cluster-leaders")
+      navigate("/cluster-leaders")
       
     } catch (err) {
       console.error("❌ Save error:", err)
@@ -77,7 +76,6 @@ function AddClusterLeaderPage() {
   }
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header Card */}
         <div className="bg-white p-6 rounded-lg shadow-md">
@@ -99,7 +97,6 @@ function AddClusterLeaderPage() {
           />
         </div>
       </div>
-    </DashboardLayout>
   )
 }
 

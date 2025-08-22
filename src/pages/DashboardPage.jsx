@@ -97,7 +97,7 @@ function DashboardPage() {
   const quickActions = [
     {
       title: 'Add New Member',
-      description: 'Register a new tobacco farmer',
+      description: 'Register a new  farmer',
       icon: '➕',
       action: () => navigate('/add-member'),  // Fixed navigation paths
       color: 'green'

@@ -21,6 +21,9 @@ import MemberDetailsPage from "./pages/MemberDetailsPage"
 import EditMemberPage from "./pages/EditMemberPage"
 import ClusterLeadersPage from "./pages/ClusterLeadersPage"
 import ClusterMembersPage from "./pages/ClusterMembersPage"
+import AddClusterLeaderPage from "./pages/AddClusterLeaderPage"
+import EditClusterLeaderPage from "./pages/EditClusterLeaderPage"
+import ClusterLeaderDetailsPage from "./pages/ClusterLeaderDetailsPage"
 import ExportPage from "./pages/ExportPage"
 
 // Get Clerk publishable key
@@ -97,6 +100,30 @@ function App() {
             <ProtectedRoute requiredRole="admin">
               <DashboardLayout>
                 <ClusterLeadersPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/add-cluster-leader" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <AddClusterLeaderPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/cluster-leader/:id" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <ClusterLeaderDetailsPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/cluster-leader/:id/edit" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <EditClusterLeaderPage />
               </DashboardLayout>
             </ProtectedRoute>
           } />

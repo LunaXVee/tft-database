@@ -114,7 +114,8 @@ function ClusterMembersPage() {
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => navigate('/dashboard/cluster-leaders')}
+                onClick={() => navigate("/cluster-leaders")
+                }
               >
                 👥 Back to Clusters
               </Button>

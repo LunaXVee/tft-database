@@ -1,15 +1,10 @@
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import MemberForm from "@/components/MemberForm"
 import { supabase } from "@/lib/supabase"
-import DashboardLayout from "@/components/DashboardLayout"
 
 function AddMemberPage() {
   const navigate = useNavigate()
-  const location = useLocation()
-  
-  // Check if we're in dashboard mode
-  const isDashboardMode = location.pathname.startsWith('/dashboard')
 
   const handleAddMember = async (data) => {
     console.clear()
@@ -56,7 +51,7 @@ function AddMemberPage() {
       alert("🎉 Member registered successfully!")
       
       // Navigate back to members directory
-      navigate(isDashboardMode ? "/dashboard/members" : "/members")
+      navigate("/members")
       
     } catch (err) {
       console.error("❌ Save error:", err)
@@ -64,14 +59,14 @@ function AddMemberPage() {
     }
   }
 
-  const AddMemberContent = () => (
+  return (
     <div className="space-y-6">
       {/* Header Card */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-800">Member Registration</h3>
-            <p className="text-gray-600 mt-1">Add a new  farmer to the database</p>
+            <p className="text-gray-600 mt-1">Add a new farmer to the database</p>
           </div>
           <div className="text-3xl">👤</div>
         </div>
@@ -83,42 +78,6 @@ function AddMemberPage() {
           onSubmit={handleAddMember}
           submitButtonText="Register Member"
         />
-      </div>
-    </div>
-  )
-
-  // Render different layouts based on dashboard mode
-  if (isDashboardMode) {
-    return (
-      <DashboardLayout>
-        <AddMemberContent />
-      </DashboardLayout>
-    )
-  }
-
-  // Legacy standalone page (for backward compatibility)
-  return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/')}
-            className="mb-4"
-          >
-            ← Back to Home
-          </Button>
-          <h1 className="text-3xl font-bold text-green-700">
-            Add New Member
-          </h1>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <MemberForm 
-            onSubmit={handleAddMember}
-            submitButtonText="Add Member"
-          />
-        </div>
       </div>
     </div>
   )

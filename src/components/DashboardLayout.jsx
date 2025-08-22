@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }) {
             </div>
             <div className="ml-3">
               <p className="text-lg font-semibold text-gray-900">TFT Database</p>
-              <p className="text-xs text-gray-500">Farmers Management</p>
+              <p className="text-xs text-gray-500">The Farmers Talk Portal</p>
             </div>
           </div>
 
