@@ -12,7 +12,7 @@ import AddClusterLeaderPage from "./pages/AddClusterLeaderPage"
 import EditClusterLeaderPage from "./pages/EditClusterLeaderPage"
 import ClusterMembersPage from "./pages/ClusterMembersPage"
 import CalendarPage from "./pages/CalendarPage" // Add calendar import
-
+import AnalyticsPage from "./pages/AnalyticsPage"
 
 
 function App() {
@@ -51,6 +51,9 @@ function App() {
           <Route path="/export" element={<ExportPage />} />
           <Route path="/member/:id" element={<MemberDetailsPage />} />
           <Route path="/member/:id/edit" element={<EditMemberPage />} />
+
+          <Route path="/dashboard/analytics" element={<AnalyticsPage />} />
+
 </Routes>
 
     </BrowserRouter>

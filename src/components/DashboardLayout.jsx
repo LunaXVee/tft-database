@@ -41,6 +41,12 @@ function DashboardLayout({ children }) {
       path: '/dashboard/calendar'
     },
     {
+        id: 'analytics',  // ADD THIS NEW ITEM
+        label: 'Analytics Overview',
+        icon: '📈',
+        path: '/dashboard/analytics'
+      },
+    {
       id: 'export-data',
       label: 'Export Data',
       icon: '📄',

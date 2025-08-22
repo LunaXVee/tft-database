@@ -41,8 +41,8 @@ const EVENT_TYPES = {
 }
 
 function CalendarPage() {
-  // Start calendar in November 2025 where we have sample events
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 10, 1)) // November 2025 (month is 0-indexed)
+  // Start calendar in current month (August 2025)
+  const [currentDate, setCurrentDate] = useState(new Date())
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState('Month') // Month, Week, Day
@@ -275,8 +275,9 @@ function CalendarPage() {
               ) : upcomingEvents.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-gray-500 mb-2">No upcoming events</div>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => setShowAddModal(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Button className="bg-green-600 hover:bg-green-700 text-white" variant="outline" size="sm" onClick={() => setShowAddModal(true)}>
+
+                    <Plus className="h-4 w-4 mr-2" />
                     Add Event
                   </Button>
                 </div>
