@@ -170,14 +170,14 @@ function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, index) => (
           <div key={index} className="bg-[#E5E6E7] p-6 rounded-lg shadow-md">
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm font-medium text-[#21211D]">{stat.title}</p>
                 <p className="text-2xl font-bold text-[#21211D] mt-1">{stat.value}</p>
-                <p className="text-sm text-gray-500 mt-1">{stat.description}</p>
+                <p className="text-sm text-[#797E86] mt-1">{stat.description}</p>
               </div>
-              <stat.icon className="w-8 h-8 text-gray-600" />
-              </div>
+              <stat.icon className="w-5 h-5 text-[#797E86]" />
+            </div>
           </div>
         ))}
       </div>

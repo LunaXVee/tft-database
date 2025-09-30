@@ -6,12 +6,11 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* TFT Logo and Header */}
+
         <div className="text-center mb-8">
-          <div className="mx-auto h-16 w-16 bg-green-600 rounded-full flex items-center justify-center mb-4">
-            <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-            </svg>
-          </div>
+        <div className="mx-auto h-16 w-16 bg-green-600 rounded-full flex items-center justify-center mb-4 p-3">
+  <img src="/leaf.svg" alt="TFT Logo" className="h-full w-full" />
+</div>
           <h2 className="text-3xl font-bold text-gray-900">
             Create TFT Account
           </h2>

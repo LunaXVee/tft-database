@@ -6,12 +6,12 @@ export default function SignInPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* TFT Logo and Header */}
+
         <div className="text-center mb-8">
-          <div className="mx-auto h-16 w-16 bg-green-600 rounded-full flex items-center justify-center mb-4">
-            <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-            </svg>
-          </div>
+        <div className="mx-auto h-16 w-16 bg-green-600 rounded-full flex items-center justify-center mb-4 p-3">
+  <img src="/leaf.svg" alt="TFT Logo" className="h-full w-full" />
+</div>
+          
           <h2 className="text-3xl font-bold text-gray-900">
             TFT Database
           </h2>
