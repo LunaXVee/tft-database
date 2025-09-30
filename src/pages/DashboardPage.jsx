@@ -162,7 +162,7 @@ function DashboardPage() {
           {getGreeting()}, {user?.firstName || 'User'}!
         </h1>
         <p className="text-muted-foreground mt-2 text-[#797E86]">
-          Here's a snapshot of your farm's performance and key summaries.
+          Here's a snapshot of your TFT club members performance and key summaries.
         </p>
       </div>
 
@@ -183,7 +183,7 @@ function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-[#E5E6E7] p-6 rounded-lg shadow-md">
+      <div className="bg-[#f6f7f8] p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {quickActions.map((action, index) => (

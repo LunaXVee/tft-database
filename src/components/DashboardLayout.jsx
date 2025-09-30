@@ -53,12 +53,16 @@ export default function DashboardLayout({ children }) {
           {/* Mobile Logo */}
           <div className="flex items-center justify-between flex-shrink-0 px-4">
             <div className="flex items-center">
-              <div className="h-8 w-8 bg-green-600 rounded flex items-center justify-center">
-                <span className="text-white font-bold">TFT</span>
-              </div>
+              
+            <div className="h-12 w-12  flex items-center justify-center">
+          <img src="/leaf.svg" alt="TFT Logo" className="h-12 w-12  " />
+            </div>
               <div className="ml-3">
-                <p className="text-lg font-semibold text-gray-900">TFT Database</p>
-                <p className="text-xs text-gray-500">The Farmers Talk</p>
+              <p className="text-lg font-bold  text-gray-900">TFT Database</p>
+              <p className="text-xs font-semibold  text-[#1B5E20]">The Farmers Talk</p>
+                
+
+
               </div>
             </div>
             <button
@@ -124,13 +128,16 @@ export default function DashboardLayout({ children }) {
       <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
         <div className="flex flex-col flex-grow pt-5 bg-[#F6F6F6] overflow-y-auto border-r">
           {/* Logo */}
+          
           <div className="flex items-center flex-shrink-0 px-4">
-            <div className="h-8 w-8 bg-green-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold">TFT</span>
+           
+          <div className="h-12 w-12  flex items-center justify-center">
+          <img src="/leaf.svg" alt="TFT Logo" className="h-12 w-12  " />
             </div>
+
             <div className="ml-3">
-              <p className="text-lg font-semibold text-gray-900">TFT Database</p>
-              <p className="text-xs text-gray-500">The Farmers Talk</p>
+              <p className="text-lg font-bold  text-gray-900">TFT Database</p>
+              <p className="text-xs font-semibold  text-[#1B5E20]">The Farmers Talk</p>
             </div>
           </div>
 
@@ -148,7 +155,7 @@ export default function DashboardLayout({ children }) {
                       to={item.href}
                       className={`${
                         location.pathname === item.href
-                          ? 'bg-green-100 text-green-900 border-r-2 border-green-500'
+                          ? 'bg-[#E8F5E9] text-[#1B5E20] border-l-2 border-[#4CAF50]'
                           : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                       } group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors`}
                     >
@@ -207,7 +214,7 @@ export default function DashboardLayout({ children }) {
     <span className="text-gray-400 text-xl md:text-2xl font-bold hidden sm:block  ml-3"> › </span>
     
 
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900  ml-3">
+              <h1 className="text-xl md:text-2xl font-bold text-[#1B5E20]  ml-3">
                 {navigation.find(item => item.href === location.pathname)?.name || 'Dashboard'}
               </h1>
 
