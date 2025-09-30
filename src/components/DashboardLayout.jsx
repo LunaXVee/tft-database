@@ -197,9 +197,20 @@ export default function DashboardLayout({ children }) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+             
+                  {/* Logo and Company Name */}
+    <div className="flex items-center space-x-3">
+     
+      <span className="text-xl md:text-2xl font-bold text-gray-400 hidden sm:block">TFT  </span>
+    </div>
+    {/* Breadcrumb separator */}
+    <span className="text-gray-400 text-xl md:text-2xl font-bold hidden sm:block  ml-3"> › </span>
+    
+
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900  ml-3">
                 {navigation.find(item => item.href === location.pathname)?.name || 'Dashboard'}
               </h1>
+
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">
               <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium capitalize">
