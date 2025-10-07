@@ -5,7 +5,7 @@ import { ClerkProvider } from '@clerk/clerk-react'
 // Authentication Pages
 import SignInPage from "./pages/SignInPage"
 import SignUpPage from "./pages/SignUpPage"
-import AccessDeniedPage from "./pages/AccessDeniedPage"  // Use the combined access denied page
+import AccessDeniedPage from "./pages/AccessDeniedPage"
 
 // Protected Components
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -45,8 +45,6 @@ function App() {
           <Route path="/access-denied" element={<AccessDeniedPage />} />
           <Route path="/unauthorized" element={<AccessDeniedPage />} />
           <Route path="/no-portal-access" element={<AccessDeniedPage />} />
-          <Route path="/add-soil-sample" element={<AddSoilSamplePage />} />  {/* Add this */}
-
 
           {/* Protected Routes - All wrapped in DashboardLayout */}
           <Route path="/" element={
@@ -94,6 +92,15 @@ function App() {
             <ProtectedRoute>
               <DashboardLayout>
                 <EditMemberPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          {/* Soil Samples */}
+          <Route path="/add-soil-sample" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <AddSoilSamplePage />
               </DashboardLayout>
             </ProtectedRoute>
           } />
@@ -160,6 +167,112 @@ function App() {
 
           {/* Export (Admin Only) */}
           <Route path="/export" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <ExportPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          {/* ========== DASHBOARD ROUTES (Alternative paths) ========== */}
+          
+          <Route path="/dashboard/members" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <MembersPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard/add-member" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <AddMemberPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard/member/:id" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <MemberDetailsPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard/member/:id/edit" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <EditMemberPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/dashboard/add-soil-sample" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <AddSoilSamplePage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/dashboard/cluster-leaders" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <ClusterLeadersPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard/add-cluster-leader" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <AddClusterLeaderPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard/cluster-leader/:id" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <ClusterLeaderDetailsPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard/cluster-leader/:id/edit" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout>
+                <EditClusterLeaderPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard/cluster-members" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <ClusterMembersPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/dashboard/analytics" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <AnalyticsPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/dashboard/calendar" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <CalendarPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/dashboard/export" element={
             <ProtectedRoute requiredRole="admin">
               <DashboardLayout>
                 <ExportPage />

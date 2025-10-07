@@ -118,7 +118,7 @@ function AddSoilSamplePage() {
 
       console.log("✅ Soil sample saved successfully!", sampleData)
       alert("🎉 Soil sample uploaded successfully!")
-      navigate(`/dashboard/member/${data.memberId}`)
+      navigate(`/member/${data.memberId}`)
 
     } catch (err) {
       console.error("❌ Error:", err)
