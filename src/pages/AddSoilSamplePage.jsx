@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"  // Add useEffect import
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "react-router-dom"
@@ -37,14 +37,21 @@ function AddSoilSamplePage() {
     }
   })
 
-  // Fetch members for the dropdown
-  useState(() => {
+  // ✅ FIXED: Changed from useState to useEffect
+  useEffect(() => {
     const fetchMembers = async () => {
-      const { data } = await supabase
+      console.log("📥 Fetching members...")
+      const { data, error } = await supabase
         .from('members')
         .select('id, first_name, last_name')
         .order('first_name')
       
+      if (error) {
+        console.error("❌ Error fetching members:", error)
+        return
+      }
+      
+      console.log("✅ Members loaded:", data)
       if (data) setMembers(data)
     }
     fetchMembers()
@@ -53,6 +60,7 @@ function AddSoilSamplePage() {
   const onSubmit = async (data) => {
     setUploading(true)
     console.log("📤 Starting soil sample upload...")
+    console.log("Form data:", data)
 
     try {
       // 1. Upload the file to Supabase Storage
@@ -72,27 +80,34 @@ function AddSoilSamplePage() {
         return
       }
 
-      console.log("✅ File uploaded successfully")
+      console.log("✅ File uploaded successfully:", uploadData)
 
       // 2. Get the public URL for the file
       const { data: { publicUrl } } = supabase.storage
         .from('soil-samples')
         .getPublicUrl(fileName)
 
-      // 3. Save the record to the database
+      console.log("📎 Public URL:", publicUrl)
+
+      // ✅ FIXED: Prepare the insert data
+      const insertData = {
+        member_id: data.memberId,
+        sample_date: data.sampleDate,
+        lab_reference: data.labReference || null,
+        ph_level: data.phLevel ? parseFloat(data.phLevel) : null,
+        lime_recommendation: data.limeRecommendation ? parseInt(data.limeRecommendation) : null,
+        soil_health_rating: data.soilHealthRating || null,
+        notes: data.notes || null,
+        file_url: publicUrl,
+        uploaded_by: "Admin",
+      }
+
+      console.log("💾 Inserting to database:", insertData)
+
+      // ✅ FIXED: Removed array wrapper, just pass the object
       const { data: sampleData, error: dbError } = await supabase
         .from('soil_samples')
-        .insert([{
-          member_id: data.memberId,
-          sample_date: data.sampleDate,
-          lab_reference: data.labReference || null,
-          ph_level: data.phLevel ? parseFloat(data.phLevel) : null,
-          lime_recommendation: data.limeRecommendation ? parseInt(data.limeRecommendation) : null,
-          soil_health_rating: data.soilHealthRating || null,
-          notes: data.notes || null,
-          file_url: publicUrl,
-          uploaded_by: "Admin", // You can replace this with actual user info later
-        }])
+        .insert(insertData)
         .select()
 
       if (dbError) {
@@ -103,7 +118,7 @@ function AddSoilSamplePage() {
 
       console.log("✅ Soil sample saved successfully!", sampleData)
       alert("🎉 Soil sample uploaded successfully!")
-      navigate(`/member/${data.memberId}`)
+      navigate(`/dashboard/member/${data.memberId}`)
 
     } catch (err) {
       console.error("❌ Error:", err)
