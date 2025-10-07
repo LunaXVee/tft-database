@@ -4,11 +4,14 @@ import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
 import DashboardLayout from "@/components/DashboardLayout"
 
+
+
 function MemberDetailsPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
   const [member, setMember] = useState(null)
+  const [soilSamples, setSoilSamples] = useState([])
   const [loading, setLoading] = useState(true)
   
   // Check if we came from dashboard (most common case)
@@ -38,6 +41,21 @@ function MemberDetailsPage() {
 
       console.log("✅ Member details loaded:", data)
       setMember(data)
+
+       
+    // Fetch soil samples for this member
+    const { data: samplesData, error: samplesError } = await supabase
+    .from('soil_samples')
+    .select('*')
+    .eq('member_id', id)
+    .order('sample_date', { ascending: false })
+
+  if (samplesError) {
+    console.error("❌ Error fetching soil samples:", samplesError)
+  } else {
+    console.log("✅ Soil samples loaded:", samplesData)
+    setSoilSamples(samplesData || [])
+  }
       
     } catch (err) {
       console.error("❌ Fetch error:", err)
@@ -45,6 +63,8 @@ function MemberDetailsPage() {
     } finally {
       setLoading(false)
     }
+    
+
   }
 
   // Loading component
@@ -264,6 +284,123 @@ function MemberDetailsPage() {
           </div>
         </div>
       </div>
+
+      {/* Soil Samples Section */}
+<div className="bg-white rounded-lg shadow-md p-6">
+  <div className="flex justify-between items-center mb-4 border-b pb-3">
+    <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+      <span className="mr-2">🧪</span>
+      Soil Sample History
+    </h2>
+    <Button 
+      size="sm"
+      onClick={() => navigate(isDashboardMode ? '/dashboard/add-soil-sample' : '/add-soil-sample', {
+        state: { memberId: member.id }
+      })}
+      className="bg-green-600 hover:bg-green-700 text-white"
+    >
+      + Add Soil Sample
+    </Button>
+  </div>
+
+  {soilSamples.length === 0 ? (
+    <div className="text-center py-8">
+      <div className="text-5xl mb-3">📊</div>
+      <p className="text-gray-500">No soil samples recorded yet.</p>
+      <Button 
+        size="sm"
+        variant="outline"
+        className="mt-4"
+        onClick={() => navigate(isDashboardMode ? '/dashboard/add-soil-sample' : '/add-soil-sample', {
+          state: { memberId: member.id }
+        })}
+      >
+        Upload First Sample
+      </Button>
+    </div>
+  ) : (
+    <div className="space-y-4">
+      {soilSamples.map((sample) => (
+        <div 
+          key={sample.id} 
+          className="border rounded-lg p-4 hover:bg-gray-50 transition"
+        >
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <div className="flex-1 w-full">
+              <div className="flex flex-wrap items-center gap-3 mb-3">
+                <span className="font-medium text-lg">
+                  📅 {new Date(sample.sample_date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </span>
+                {sample.lab_reference && (
+                  <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                    Lab Ref: {sample.lab_reference}
+                  </span>
+                )}
+                {sample.soil_health_rating && (
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    sample.soil_health_rating === 'good' 
+                      ? 'bg-green-100 text-green-800'
+                      : sample.soil_health_rating === 'fair'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {sample.soil_health_rating.charAt(0).toUpperCase() + sample.soil_health_rating.slice(1)}
+                  </span>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm mb-3 bg-gray-50 p-3 rounded">
+                {sample.ph_level && (
+                  <div>
+                    <span className="text-gray-600 block text-xs">pH Level</span>
+                    <span className="font-medium text-gray-900">{sample.ph_level}</span>
+                  </div>
+                )}
+                {sample.lime_recommendation && (
+                  <div>
+                    <span className="text-gray-600 block text-xs">Lime Needed</span>
+                    <span className="font-medium text-gray-900">{sample.lime_recommendation} kg/ha</span>
+                  </div>
+                )}
+                {sample.soil_health_rating && (
+                  <div>
+                    <span className="text-gray-600 block text-xs">Overall Health</span>
+                    <span className="font-medium text-gray-900 capitalize">{sample.soil_health_rating}</span>
+                  </div>
+                )}
+              </div>
+
+              {sample.notes && (
+                <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-3">
+                  <p className="text-sm text-gray-700">
+                    <span className="font-medium">Notes:</span> {sample.notes}
+                  </p>
+                </div>
+              )}
+
+              <p className="text-xs text-gray-400">
+                Uploaded {new Date(sample.created_at).toLocaleDateString()} by {sample.uploaded_by || 'Unknown'}
+              </p>
+            </div>
+
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => window.open(sample.file_url, '_blank')}
+              className="w-full sm:w-auto"
+            >
+              📄 View Report
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
       {/* Action Buttons */}
       <div className="bg-white rounded-lg shadow-md p-6">

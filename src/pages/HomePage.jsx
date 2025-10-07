@@ -26,6 +26,12 @@ function HomePage() {
             </Button>
             <Button 
               variant="secondary" 
+              onClick={() => navigate('/add-soil-sample')}
+            >
+              Upload Soil Sample
+            </Button>
+            <Button 
+              variant="secondary" 
               onClick={() => navigate('/export')}
             >
               Export Data

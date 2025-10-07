@@ -25,6 +25,7 @@ import AddClusterLeaderPage from "./pages/AddClusterLeaderPage"
 import EditClusterLeaderPage from "./pages/EditClusterLeaderPage"
 import ClusterLeaderDetailsPage from "./pages/ClusterLeaderDetailsPage"
 import ExportPage from "./pages/ExportPage"
+import AddSoilSamplePage from "./pages/AddSoilSamplePage"
 
 // Get Clerk publishable key
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -44,6 +45,8 @@ function App() {
           <Route path="/access-denied" element={<AccessDeniedPage />} />
           <Route path="/unauthorized" element={<AccessDeniedPage />} />
           <Route path="/no-portal-access" element={<AccessDeniedPage />} />
+          <Route path="/add-soil-sample" element={<AddSoilSamplePage />} />  {/* Add this */}
+
 
           {/* Protected Routes - All wrapped in DashboardLayout */}
           <Route path="/" element={
