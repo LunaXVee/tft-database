@@ -17,7 +17,9 @@ import {
   Tractor,
   UserPlus,
   Users,
-  Download
+  Download,
+  Shield,
+  ShieldOff
 } from 'lucide-react';
 
 
@@ -60,6 +62,8 @@ function DashboardPage() {
       // Calculate stats
       const totalMembers = members?.length || 0
       const activeMembers = members?.filter(m => m.contract_status === 'Active').length || 0
+      const insuredMembers = members?.filter(m => m.has_insurance === true).length || 0 // ADD THIS
+
       
       // Calculate new members this month
       const currentMonth = new Date().getMonth()
@@ -80,7 +84,8 @@ function DashboardPage() {
         totalMembers,
         activeMembers,
         newThisMonth,
-        totalFarmArea: Math.round(totalFarmArea * 10) / 10 // Round to 1 decimal
+        totalFarmArea: Math.round(totalFarmArea * 10) / 10, // Round to 1 decimal
+        insuredMembers
       })
 
     } catch (err) {
@@ -118,6 +123,13 @@ function DashboardPage() {
       icon: Tractor,
       color: 'orange',
       description: 'Combined hectares'
+    },
+    {
+      title: 'Insured Members',
+      value: stats.insuredMembers || 0,
+      icon: Shield,
+      color: 'blue',
+      description: 'With insurance coverage'
     }
   ]
 
@@ -161,22 +173,22 @@ function DashboardPage() {
 
       {/* Welcome Message */}
       <div>
-        <h1 className="text-3xl font-bold font-headline tracking-tight text-gray-900">
+        <h1 className="text-3xl font-bold font-headline tracking-tight text-gray-900 mt-5">
           {getGreeting()}, {user?.firstName || 'User'}!
         </h1>
-        <p className="text-muted-foreground mt-2 text-[#797E86]">
+        <p className="text-muted-foreground mt-3 text-[#797E86]">
           Here's a snapshot of your TFT club members performance and key summaries.
         </p>
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
         {statCards.map((stat, index) => (
           <div key={index} className="bg-[#E5E6E7] p-6 rounded-lg shadow-md">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm font-medium text-[#21211D]">{stat.title}</p>
-                <p className="text-2xl font-bold text-[#21211D] mt-1">{stat.value}</p>
+                <p className="text-2xl font-bold text-[#1B5E20] mt-1">{stat.value}</p>
                 <p className="text-sm text-[#797E86] mt-1">{stat.description}</p>
               </div>
               <stat.icon className="w-5 h-5 text-[#797E86]" />

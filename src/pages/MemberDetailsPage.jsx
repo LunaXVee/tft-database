@@ -18,7 +18,9 @@ import {
   FileCheck,
   Edit,
   Download,
-  Trash2
+  Trash2,
+  Shield,
+  ShieldOff
 } from "lucide-react"
 
 function MemberDetailsPage() {
@@ -308,6 +310,26 @@ function MemberDetailsPage() {
                 <span className="text-sm text-gray-600 block">Primary Crop</span>
                 <span className="font-medium text-gray-900">Tobacco</span>
               </div>
+              <div>
+        <span className="text-sm text-gray-600 block">Insurance Coverage</span>
+        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+          member.has_insurance 
+            ? 'bg-blue-100 text-blue-800' 
+            : 'bg-gray-100 text-gray-800'
+        }`}>
+          {member.has_insurance ? (
+            <>
+              <Shield className="h-3 w-3" />
+              Insured
+            </>
+          ) : (
+            <>
+              <ShieldOff className="h-3 w-3" />
+              Not Insured
+            </>
+          )}
+        </span>
+      </div>
             </div>
           </div>
         </div>

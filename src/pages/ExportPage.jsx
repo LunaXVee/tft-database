@@ -54,6 +54,7 @@ function ExportPage() {
     farmType: true,
     farmName: false,
     farmSize: true,
+    hasInsurance: true,
     
     // System Information
     yearJoined: true,
@@ -89,6 +90,8 @@ function ExportPage() {
     farmType: { label: "Farm Type", category: "Farm" },
     farmName: { label: "Farm Name", category: "Farm" },
     farmSize: { label: "Farm Size (hectares)", category: "Farm" },
+    hasInsurance: { label: "Has Insurance", category: "Farm" }, // ADD THIS
+
     
     // System Information
     yearJoined: { label: "Year Joined", category: "System" },
@@ -199,9 +202,13 @@ function ExportPage() {
           case 'farmSize':
             value = member.farm_size || ''
             break
+
           case 'yearJoined':
             value = member.year_joined || ''
             break
+          case 'hasInsurance':
+              value = member.has_insurance ? 'Yes' : 'No'
+              break
           case 'contractStatus':
             value = member.contract_status || ''
             break
@@ -385,6 +392,70 @@ function ExportPage() {
             </div>
             <BarChart3 className="h-8 w-8 text-gray-400" />
           </div>
+           {/*  Members Preview */}
+      {searchTerm && (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <Filter className="h-5 w-5 text-blue-600" />
+              Filtered Results ({filteredMembers.length})
+            </h3>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setSearchTerm("")}
+              className="flex items-center gap-1"
+            >
+              <X className="h-3 w-3" />
+              Clear Filter
+            </Button>
+          </div>
+
+          {filteredMembers.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Search className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+              <p>No members match "{searchTerm}"</p>
+            </div>
+          ) : (
+            <div className="max-h-64 overflow-y-auto">
+              <div className="space-y-2">
+                {filteredMembers.map((member) => (
+                  <div 
+                    key={member.id} 
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                  >
+                    <div className="flex items-center gap-3">
+                      <User className="h-4 w-4 text-gray-400" />
+                      <div>
+                        <div className="font-medium text-gray-900">
+                          {member.first_name} {member.last_name}
+                        </div>
+                        <div className="text-sm text-gray-500 flex items-center gap-2">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {member.province}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Tractor className="h-3 w-3" />
+                            {member.farm_type?.replace('_', ' ')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      member.contract_status === 'Active' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {member.contract_status}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
           
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-200">

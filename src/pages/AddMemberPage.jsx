@@ -41,6 +41,7 @@ function AddMemberPage() {
             farm_type: data.farmType,
             farm_name: data.farmName || null,
             farm_size: data.farmSize,
+            hasInsurance: false,
           }
         ])
         .select()

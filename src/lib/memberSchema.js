@@ -28,4 +28,5 @@ export const memberSchema = z.object({
     "Please select farm type"),
   farmName: z.string().optional(),
   farmSize: z.string().min(1, "Farm size is required"),
+  hasInsurance: z.boolean().optional(),
 })

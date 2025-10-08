@@ -38,6 +38,7 @@ function MemberForm({
       farmType: initialData.farmType || "",
       farmName: initialData.farmName || "",
       farmSize: initialData.farmSize || "",
+      has_insurance: initialData.hasInsurance || "",
     }
   })
 
@@ -392,6 +393,19 @@ function MemberForm({
                 </p>
               )}
             </div>
+
+            {/* ADD THIS - Insurance Checkbox */}
+    <div className="flex items-center space-x-2 pt-6">
+      <input
+        type="checkbox"
+        id="hasInsurance"
+        {...form.register("hasInsurance")}
+        className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+      />
+      <label htmlFor="hasInsurance" className="text-sm font-medium text-gray-700">
+        Member has insurance coverage
+      </label>
+    </div>
           </div>
         </TabsContent>
       </Tabs>
