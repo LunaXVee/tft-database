@@ -155,8 +155,8 @@ function MemberDetailsPage() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center space-x-4">
-            <div className="bg-yellow-100 p-3 rounded-full">
-              <UserIcon className="h-8 w-8 text-yellow-600" />
+            <div className="bg-[#ffde59] p-3 rounded-full">
+              <UserIcon className="h-8 w-8 text-[#ffde59]" />
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">

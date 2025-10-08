@@ -14,8 +14,11 @@ import {
   BookUser,
   CheckCheck,
   ChartArea,
-  Tractor
- } from 'lucide-react';
+  Tractor,
+  UserPlus,
+  Users,
+  Download
+} from 'lucide-react';
 
 
 function DashboardPage() {
@@ -121,23 +124,23 @@ function DashboardPage() {
   const quickActions = [
     {
       title: 'Add New Member',
-      description: 'Register a new  farmer',
-      icon: '➕',
-      action: () => navigate('/add-member'),  // Fixed navigation paths
+      description: 'Register a new farmer',
+      icon: UserPlus,
+      action: () => navigate('/add-member'),
       color: 'green'
     },
     {
       title: 'View All Members',
       description: 'Browse member directory',
-      icon: '👥',
-      action: () => navigate('/members'),  // Fixed navigation paths
+      icon: Users,
+      action: () => navigate('/members'),
       color: 'blue'
     },
     {
       title: 'Export Data',
       description: 'Download member information',
-      icon: '📄',
-      action: () => navigate('/export'),  // Fixed navigation paths
+      icon: Download,
+      action: () => navigate('/export'),
       color: 'purple'
     }
   ]
@@ -154,7 +157,7 @@ function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 ">
+    <div className="space-y-6">
 
       {/* Welcome Message */}
       <div>
@@ -193,7 +196,7 @@ function DashboardPage() {
               className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-md transition-all text-left"
             >
               <div className="flex items-center space-x-3">
-                <div className="text-2xl text-[#21211D]">{action.icon}</div>
+                <action.icon className="w-6 h-6 text-[#21211D]" />
                 <div>
                   <h4 className="font-medium text-gray-800">{action.title}</h4>
                   <p className="text-sm text-gray-600">{action.description}</p>
@@ -208,8 +211,9 @@ function DashboardPage() {
       <div className="bg-[#E5E6E7] p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
         <div className="space-y-3">
-          <div className="flex items-center space-x-3 p-3 bg-[#]  rounded-lg">
-            <div className="text-green-600">  <CheckCheck className="w-5 h-5" />
+          <div className="flex items-center space-x-3 p-3 bg-[#EFF1F1] rounded-lg">
+            <div className="text-green-600">
+              <CheckCheck className="w-5 h-5" />
             </div>
             <div>
               <p className="text-sm font-medium text-[#21211D]">Database connected successfully</p>
@@ -217,7 +221,9 @@ function DashboardPage() {
             </div>
           </div>
           <div className="flex items-center space-x-3 p-3 bg-[#EFF1F1] rounded-lg">
-            <div className="text-blue-600"> <ChartArea className="w-5 h-5" /></div>
+            <div className="text-blue-600">
+              <ChartArea className="w-5 h-5" />
+            </div>
             <div>
               <p className="text-sm font-medium text-[#21211D]">Dashboard statistics updated</p>
               <p className="text-xs text-gray-500">Real-time member counts and farm data</p>

@@ -4,6 +4,24 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { supabase } from "@/lib/supabase"
 import DashboardLayout from "@/components/DashboardLayout"
+import {
+  Download,
+  FileText,
+  FileSpreadsheet,
+  Users,
+  CheckSquare,
+  Search,
+  X,
+  User,
+  MapPin,
+  Tractor,
+  Settings,
+  BarChart3,
+  ArrowLeft,
+  ClipboardList,
+  AlertCircle,
+  Filter
+} from "lucide-react"
 
 function ExportPage() {
   const navigate = useNavigate()
@@ -335,6 +353,17 @@ function ExportPage() {
 
   const selectedFieldCount = Object.values(selectedFields).filter(Boolean).length
 
+  // Category icons
+  const getCategoryIcon = (category) => {
+    switch(category) {
+      case 'Personal': return User
+      case 'Location': return MapPin
+      case 'Farm': return Tractor
+      case 'System': return Settings
+      default: return Settings
+    }
+  }
+
   const ExportContent = () => {
     if (loading) {
       return (
@@ -354,11 +383,11 @@ function ExportPage() {
               <h3 className="text-lg font-semibold text-gray-800">Data Export Center</h3>
               <p className="text-gray-600 mt-1">Download member information in CSV or Excel format</p>
             </div>
-            <div className="text-3xl">📊</div>
+            <BarChart3 className="h-8 w-8 text-gray-400" />
           </div>
           
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-200">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{members.length}</div>
               <div className="text-sm text-gray-600">Total Members</div>
@@ -371,7 +400,6 @@ function ExportPage() {
               <div className="text-2xl font-bold text-purple-600">{selectedFieldCount}</div>
               <div className="text-sm text-gray-600">Selected Fields</div>
             </div>
-            
           </div>
         </div>
 
@@ -382,46 +410,56 @@ function ExportPage() {
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-semibold text-gray-800">Select Fields to Export</h3>
                 <div className="space-x-2">
-                  <Button variant="outline" size="sm" onClick={selectEssentialFields}>
-                    📋 Essential Only
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={selectEssentialFields}
+                    className="flex items-center gap-1"
+                  >
+                    <ClipboardList className="h-4 w-4" />
+                    Essential Only
                   </Button>
-                  <Button variant="outline" size="sm" onClick={selectAllFields}>
-                    ✅ Select All
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={selectAllFields}
+                    className="flex items-center gap-1"
+                  >
+                    <CheckSquare className="h-4 w-4" />
+                    Select All
                   </Button>
                 </div>
               </div>
               
               {/* Group fields by category */}
-              {['Personal', 'Location', 'Farm', 'System'].map(category => (
-                <div key={category} className="mb-6">
-                  <h4 className="font-medium text-gray-800 mb-3 pb-2 border-b border-gray-200 flex items-center">
-                    <span className="mr-2">
-                      {category === 'Personal' && '👤'}
-                      {category === 'Location' && '📍'}
-                      {category === 'Farm' && '🚜'}
-                      {category === 'System' && '⚙️'}
-                    </span>
-                    {category} Information
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {Object.entries(fieldDefinitions)
-                      .filter(([_, def]) => def.category === category)
-                      .map(([fieldKey, fieldDef]) => (
-                        <label key={fieldKey} className="flex items-center space-x-3 text-sm p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={selectedFields[fieldKey]}
-                            onChange={() => toggleField(fieldKey)}
-                            className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-                          />
-                          <span className={selectedFields[fieldKey] ? 'font-medium text-gray-900' : 'text-gray-600'}>
-                            {fieldDef.label}
-                          </span>
-                        </label>
-                      ))}
+              {['Personal', 'Location', 'Farm', 'System'].map(category => {
+                const CategoryIcon = getCategoryIcon(category)
+                return (
+                  <div key={category} className="mb-6">
+                    <h4 className="font-medium text-gray-800 mb-3 pb-2 border-b border-gray-200 flex items-center">
+                      <CategoryIcon className="h-4 w-4 mr-2 text-gray-600" />
+                      {category} Information
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {Object.entries(fieldDefinitions)
+                        .filter(([_, def]) => def.category === category)
+                        .map(([fieldKey, fieldDef]) => (
+                          <label key={fieldKey} className="flex items-center space-x-3 text-sm p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={selectedFields[fieldKey]}
+                              onChange={() => toggleField(fieldKey)}
+                              className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                            />
+                            <span className={selectedFields[fieldKey] ? 'font-medium text-gray-900' : 'text-gray-600'}>
+                              {fieldDef.label}
+                            </span>
+                          </label>
+                        ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
 
@@ -429,7 +467,10 @@ function ExportPage() {
           <div className="space-y-6">
             {/* Filter Panel */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">🔍 Filter Data</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <Search className="h-5 w-5" />
+                Filter Data
+              </h3>
               
               <div className="space-y-4">
                 <div>
@@ -444,14 +485,18 @@ function ExportPage() {
                 
                 {searchTerm && (
                   <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
-                    <div className="font-medium">Active Filter:</div>
+                    <div className="font-medium flex items-center gap-1">
+                      <Filter className="h-4 w-4" />
+                      Active Filter:
+                    </div>
                     <div>"{searchTerm}" - {filteredMembers.length} matches</div>
                     <Button 
                       variant="outline" 
                       size="sm" 
                       onClick={() => setSearchTerm("")}
-                      className="mt-2"
+                      className="mt-2 flex items-center gap-1"
                     >
+                      <X className="h-3 w-3" />
                       Clear Filter
                     </Button>
                   </div>
@@ -461,47 +506,59 @@ function ExportPage() {
 
             {/* Export Buttons */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">📥 Download</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <Download className="h-5 w-5" />
+                Download
+              </h3>
               
               <div className="space-y-4">
                 <Button 
                   onClick={exportToCSV}
                   disabled={exporting || selectedFieldCount === 0 || filteredMembers.length === 0}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2"
                 >
-                  {exporting ? "⏳ Exporting..." : "📄 Export as CSV"}
+                  <FileText className="h-4 w-4" />
+                  {exporting ? "Exporting..." : "Export as CSV"}
                 </Button>
                 
                 <Button 
                   variant="outline"
                   onClick={exportToExcel}
                   disabled={exporting || selectedFieldCount === 0 || filteredMembers.length === 0}
-                  className="w-full border-blue-500 text-blue-600 hover:bg-blue-50"
+                  className="w-full border-blue-500 text-blue-600 hover:bg-blue-50 flex items-center justify-center gap-2"
                 >
-                  {exporting ? "⏳ Exporting..." : "📊 Export as Excel"}
+                  <FileSpreadsheet className="h-4 w-4" />
+                  {exporting ? "Exporting..." : "Export as Excel"}
                 </Button>
                 
                 <div className="pt-4 border-t border-gray-200">
                   <Button 
                     variant="outline"
                     onClick={() => navigate(isDashboardMode ? '/dashboard/members' : '/members')}
-                    className="w-full"
+                    className="w-full flex items-center justify-center gap-2"
                   >
-                    👥 Back to Members
+                    <Users className="h-4 w-4" />
+                    Back to Members
                   </Button>
                 </div>
               </div>
               
               {selectedFieldCount === 0 && (
                 <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-600 text-sm font-medium">⚠️ No fields selected</p>
+                  <p className="text-red-600 text-sm font-medium flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    No fields selected
+                  </p>
                   <p className="text-red-500 text-sm">Please select at least one field to export</p>
                 </div>
               )}
               
               {filteredMembers.length === 0 && members.length > 0 && (
                 <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-yellow-600 text-sm font-medium">🔍 No matches found</p>
+                  <p className="text-yellow-600 text-sm font-medium flex items-center gap-1">
+                    <Search className="h-4 w-4" />
+                    No matches found
+                  </p>
                   <p className="text-yellow-500 text-sm">No members match your current filter</p>
                 </div>
               )}
@@ -514,9 +571,7 @@ function ExportPage() {
 
   // Render different layouts based on dashboard mode
   if (isDashboardMode) {
-    return (
-        <ExportContent />
-    )
+    return <ExportContent />
   }
 
   // Legacy standalone page (for backward compatibility)
@@ -527,9 +582,10 @@ function ExportPage() {
           <Button 
             variant="outline" 
             onClick={() => navigate('/')}
-            className="mb-4"
+            className="mb-4 flex items-center gap-2"
           >
-            ← Back to Home
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
           </Button>
           <h1 className="text-3xl font-bold text-green-700">
             Export Data

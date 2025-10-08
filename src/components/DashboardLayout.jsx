@@ -220,7 +220,7 @@ export default function DashboardLayout({ children }) {
 
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">
-              <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium capitalize">
+              <span className="bg-[#ffde59] text-gray-900 px-2 py-1 rounded-full text-xs font-medium capitalize">
                 {userRole.replace('_', ' ')}
               </span>
               <UserButton 

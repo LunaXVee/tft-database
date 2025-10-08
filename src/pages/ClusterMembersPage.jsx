@@ -12,6 +12,21 @@ import {
 } from "@/components/ui/table"
 import { supabase } from "@/lib/supabase"
 import DashboardLayout from "@/components/DashboardLayout"
+import {
+  Users,
+  UserPlus,
+  MapPin,
+  Phone,
+  Mail,
+  Search,
+  Eye,
+  Edit,
+  CheckCircle,
+  Tractor,
+  BarChart3,
+  Grid3x3,
+  ArrowLeft
+} from "lucide-react"
 
 function ClusterMembersPage() {
   const { clusterName } = useParams() // Get cluster name from URL
@@ -92,15 +107,24 @@ function ClusterMembersPage() {
               </h1>
               {clusterInfo && (
                 <div className="mt-2 space-y-1">
-                  <p className="text-lg text-blue-600 font-medium">
+                  <p className="text-lg text-blue-600 font-medium flex items-center gap-2">
+                    <Users className="h-5 w-5" />
                     Led by {clusterInfo.first_name} {clusterInfo.last_name}
                   </p>
-                  <p className="text-gray-600">
-                    📍 {clusterInfo.province}, {clusterInfo.district}
+                  <p className="text-gray-600 flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    {clusterInfo.province}, {clusterInfo.district}
                   </p>
-                  <p className="text-gray-600">
-                    📱 {clusterInfo.phone} | 📧 {clusterInfo.email || 'No email'}
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <p className="text-gray-600 flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      {clusterInfo.phone}
+                    </p>
+                    <p className="text-gray-600 flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      {clusterInfo.email || 'No email'}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -108,16 +132,18 @@ function ClusterMembersPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Button 
                 onClick={() => navigate('/dashboard/add-member')}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
               >
-                ➕ Add Member to Cluster
+                <UserPlus className="h-4 w-4" />
+                Add Member to Cluster
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => navigate("/cluster-leaders")
-                }
+                onClick={() => navigate("/cluster-leaders")}
+                className="flex items-center gap-2"
               >
-                👥 Back to Clusters
+                <ArrowLeft className="h-4 w-4" />
+                Back to Clusters
               </Button>
             </div>
           </div>
@@ -126,22 +152,34 @@ function ClusterMembersPage() {
         {/* Statistics Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md text-center">
+            <div className="flex items-center justify-center mb-2">
+              <Users className="h-6 w-6 text-gray-600" />
+            </div>
             <div className="text-2xl lg:text-3xl font-bold text-gray-800">{members.length}</div>
             <div className="text-sm lg:text-base text-gray-600 mt-1">Total Members</div>
           </div>
           <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md text-center">
+            <div className="flex items-center justify-center mb-2">
+              <CheckCircle className="h-6 w-6 text-green-600" />
+            </div>
             <div className="text-2xl lg:text-3xl font-bold text-green-600">
               {members.filter(m => m.contract_status === 'Active').length}
             </div>
             <div className="text-sm lg:text-base text-gray-600 mt-1">Active Contracts</div>
           </div>
           <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md text-center">
+            <div className="flex items-center justify-center mb-2">
+              <BarChart3 className="h-6 w-6 text-blue-600" />
+            </div>
             <div className="text-2xl lg:text-3xl font-bold text-blue-600">
               {Math.round(members.reduce((sum, m) => sum + (parseFloat(m.farm_size) || 0), 0) * 10) / 10}
             </div>
             <div className="text-sm lg:text-base text-gray-600 mt-1">Total Hectares</div>
           </div>
           <div className="bg-white p-4 lg:p-6 rounded-lg shadow-md text-center">
+            <div className="flex items-center justify-center mb-2">
+              <Grid3x3 className="h-6 w-6 text-purple-600" />
+            </div>
             <div className="text-2xl lg:text-3xl font-bold text-purple-600">
               {new Set(members.map(m => m.farm_type)).size}
             </div>
@@ -157,12 +195,13 @@ function ClusterMembersPage() {
                 <h3 className="text-lg font-semibold text-gray-800">Cluster Members</h3>
                 <p className="text-gray-600 mt-1">Members registered under this cluster</p>
               </div>
-              <div className="flex-1 max-w-md">
+              <div className="flex-1 max-w-md relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search members..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full"
+                  className="w-full pl-10"
                 />
               </div>
             </div>
@@ -186,7 +225,8 @@ function ClusterMembersPage() {
                       <div className="text-gray-500">
                         {searchTerm ? (
                           <div>
-                            <div className="text-lg mb-2">🔍 No matches found</div>
+                            <Search className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                            <div className="text-lg mb-2">No matches found</div>
                             <div>No members found matching "{searchTerm}"</div>
                             <Button 
                               variant="outline" 
@@ -198,12 +238,14 @@ function ClusterMembersPage() {
                           </div>
                         ) : (
                           <div>
-                            <div className="text-lg mb-2">👥 No members in this cluster yet</div>
+                            <Users className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                            <div className="text-lg mb-2">No members in this cluster yet</div>
                             <div>Start by adding members to {decodeURIComponent(clusterName)}</div>
                             <Button 
                               onClick={() => navigate('/dashboard/add-member')}
-                              className="mt-3 bg-green-600 hover:bg-green-700 text-white"
+                              className="mt-3 bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 mx-auto"
                             >
+                              <UserPlus className="h-4 w-4" />
                               Add First Member
                             </Button>
                           </div>
@@ -229,15 +271,20 @@ function ClusterMembersPage() {
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="text-sm font-medium">📱 {member.mobile_phone_1}</div>
-                          <div className="text-sm text-gray-500">
-                            📧 {member.email_address || 'No email'}
+                          <div className="text-sm font-medium flex items-center gap-1">
+                            <Phone className="h-3 w-3 text-gray-400" />
+                            {member.mobile_phone_1}
+                          </div>
+                          <div className="text-sm text-gray-500 flex items-center gap-1">
+                            <Mail className="h-3 w-3 text-gray-400" />
+                            {member.email_address || 'No email'}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="font-medium capitalize">
+                          <div className="font-medium capitalize flex items-center gap-1">
+                            <Tractor className="h-3 w-3 text-gray-400" />
                             {member.farm_type?.replace('_', ' ')}
                           </div>
                           <div className="text-sm text-gray-500">
@@ -260,17 +307,19 @@ function ClusterMembersPage() {
                             variant="outline" 
                             size="sm"
                             onClick={() => navigate(`/member/${member.id}`)}
-                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50 flex items-center gap-1"
                           >
-                            👁️ View
+                            <Eye className="h-4 w-4" />
+                            View
                           </Button>
                           <Button 
                             variant="outline" 
                             size="sm"
                             onClick={() => navigate(`/member/${member.id}/edit`)}
-                            className="text-green-600 border-green-200 hover:bg-green-50"
+                            className="text-green-600 border-green-200 hover:bg-green-50 flex items-center gap-1"
                           >
-                            ✏️ Edit
+                            <Edit className="h-4 w-4" />
+                            Edit
                           </Button>
                         </div>
                       </TableCell>
@@ -290,9 +339,12 @@ function ClusterMembersPage() {
                   {searchTerm && ` (filtered by "${searchTerm}")`}
                 </div>
                 <div className="flex flex-wrap items-center gap-4">
-                  <span>🚜 Total Farm Area: {
-                    filteredMembers.reduce((sum, m) => sum + (parseFloat(m.farm_size) || 0), 0).toFixed(1)
-                  } hectares</span>
+                  <span className="flex items-center gap-1">
+                    <Tractor className="h-4 w-4" />
+                    Total Farm Area: {
+                      filteredMembers.reduce((sum, m) => sum + (parseFloat(m.farm_size) || 0), 0).toFixed(1)
+                    } hectares
+                  </span>
                 </div>
               </div>
             </div>

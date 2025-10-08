@@ -3,6 +3,23 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { supabase } from "@/lib/supabase"
+import {
+  Users,
+  UserPlus,
+  Search,
+  Download,
+  CheckCircle,
+  Filter,
+  Globe,
+  Phone,
+  Mail,
+  MapPin,
+  Eye,
+  Edit,
+  Trash2,
+  Shield,
+  Calendar
+} from "lucide-react"
 
 function ClusterLeadersPage() {
   const navigate = useNavigate()
@@ -91,12 +108,13 @@ function ClusterLeadersPage() {
       <div className="bg-white p-4 rounded-lg shadow-md">
         <div className="space-y-4">
           {/* Search */}
-          <div className="w-full">
+          <div className="w-full relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search cluster leaders..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
+              className="w-full pl-10"
             />
           </div>
           
@@ -104,16 +122,18 @@ function ClusterLeadersPage() {
           <div className="flex flex-col sm:flex-row gap-3">
             <Button 
               onClick={() => navigate('/add-cluster-leader')}
-              className="bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none"
+              className="bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none flex items-center justify-center gap-2"
             >
-              ➕ Add Cluster Leader
+              <UserPlus className="h-4 w-4" />
+              Add Cluster Leader
             </Button>
             <Button 
               variant="outline"
               onClick={() => navigate('/export')}
-              className="border-blue-500 text-blue-600 hover:bg-blue-50 flex-1 sm:flex-none"
+              className="border-blue-500 text-blue-600 hover:bg-blue-50 flex-1 sm:flex-none flex items-center justify-center gap-2"
             >
-              📄 Export Data
+              <Download className="h-4 w-4" />
+              Export Data
             </Button>
           </div>
         </div>
@@ -121,20 +141,32 @@ function ClusterLeadersPage() {
         {/* Quick Stats - Mobile Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4 pt-4 border-t border-gray-200">
           <div className="text-center bg-gray-50 p-3 rounded">
+            <div className="flex items-center justify-center mb-1">
+              <Shield className="h-5 w-5 text-gray-600" />
+            </div>
             <div className="text-lg md:text-2xl font-bold text-gray-800">{leaders.length}</div>
             <div className="text-xs md:text-sm text-gray-600">Total Leaders</div>
           </div>
           <div className="text-center bg-green-50 p-3 rounded">
+            <div className="flex items-center justify-center mb-1">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+            </div>
             <div className="text-lg md:text-2xl font-bold text-green-600">
               {leaders.filter(l => l.status === 'Active').length}
             </div>
             <div className="text-xs md:text-sm text-gray-600">Active</div>
           </div>
           <div className="text-center bg-blue-50 p-3 rounded">
+            <div className="flex items-center justify-center mb-1">
+              <Filter className="h-5 w-5 text-blue-600" />
+            </div>
             <div className="text-lg md:text-2xl font-bold text-blue-600">{filteredLeaders.length}</div>
             <div className="text-xs md:text-sm text-gray-600">Results</div>
           </div>
           <div className="text-center bg-purple-50 p-3 rounded">
+            <div className="flex items-center justify-center mb-1">
+              <Globe className="h-5 w-5 text-purple-600" />
+            </div>
             <div className="text-lg md:text-2xl font-bold text-purple-600">
               {new Set(leaders.map(l => l.province)).size}
             </div>
@@ -155,7 +187,8 @@ function ClusterLeadersPage() {
             <div className="text-gray-500">
               {searchTerm ? (
                 <div>
-                  <div className="text-lg mb-2">🔍 No matches found</div>
+                  <Search className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                  <div className="text-lg mb-2">No matches found</div>
                   <div className="mb-3">No cluster leaders found matching "{searchTerm}"</div>
                   <Button 
                     variant="outline" 
@@ -166,9 +199,14 @@ function ClusterLeadersPage() {
                 </div>
               ) : (
                 <div>
-                  <div className="text-lg mb-2">👨‍💼 No cluster leaders yet</div>
+                  <Shield className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                  <div className="text-lg mb-2">No cluster leaders yet</div>
                   <div className="mb-3">Start by adding your first cluster leader</div>
-                  <Button onClick={() => navigate('/add-cluster-leader')}>
+                  <Button 
+                    onClick={() => navigate('/add-cluster-leader')}
+                    className="flex items-center gap-2"
+                  >
+                    <UserPlus className="h-4 w-4" />
                     Add First Leader
                   </Button>
                 </div>
@@ -190,8 +228,9 @@ function ClusterLeadersPage() {
                       >
                         {leader.first_name} {leader.last_name}
                       </button>
-                      <div className="text-sm text-gray-500 mt-1">
-                        📱 {leader.phone}
+                      <div className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+                        <Phone className="h-3 w-3" />
+                        {leader.phone}
                       </div>
                     </div>
 
@@ -199,7 +238,7 @@ function ClusterLeadersPage() {
                     <div className="bg-green-50 p-3 rounded">
                       <div className="font-medium text-green-800">{leader.cluster_name}</div>
                       <div className="text-sm text-green-600">{leader.province}</div>
-                      <div className="text-xs text-green-500 mt-1">
+                      <div className="text-xs text-green-500 mt-1 flex items-center gap-1">
                         Appointed {leader.year_appointed}
                       </div>
                     </div>
@@ -207,13 +246,19 @@ function ClusterLeadersPage() {
                     {/* Details Grid */}
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
-                        <span className="text-gray-500">Email:</span>
+                        <span className="text-gray-500 flex items-center gap-1">
+                          <Mail className="h-3 w-3" />
+                          Email:
+                        </span>
                         <div className="font-medium">
                           {leader.email || 'Not provided'}
                         </div>
                       </div>
                       <div>
-                        <span className="text-gray-500">District:</span>
+                        <span className="text-gray-500 flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          District:
+                        </span>
                         <div className="font-medium">{leader.district}</div>
                       </div>
                     </div>
@@ -233,24 +278,27 @@ function ClusterLeadersPage() {
                           variant="outline" 
                           size="sm"
                           onClick={() => navigate(`/cluster-leader/${leader.id}`)}
-                          className="text-blue-600 border-blue-200 hover:bg-blue-50 text-xs px-2 py-1"
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50 text-xs px-2 py-1 flex items-center gap-1"
                         >
+                          <Eye className="h-3 w-3" />
                           View
                         </Button>
                         <Button 
                           variant="outline" 
                           size="sm"
                           onClick={() => navigate(`/cluster-leader/${leader.id}/edit`)}
-                          className="text-green-600 border-green-200 hover:bg-green-50 text-xs px-2 py-1"
+                          className="text-green-600 border-green-200 hover:bg-green-50 text-xs px-2 py-1 flex items-center gap-1"
                         >
+                          <Edit className="h-3 w-3" />
                           Edit
                         </Button>
                         <Button 
                           variant="outline" 
                           size="sm"
                           onClick={() => handleDeleteLeader(leader.id, `${leader.first_name} ${leader.last_name}`)}
-                          className="text-red-600 border-red-200 hover:bg-red-50 text-xs px-2 py-1"
+                          className="text-red-600 border-red-200 hover:bg-red-50 text-xs px-2 py-1 flex items-center gap-1"
                         >
+                          <Trash2 className="h-3 w-3" />
                           Delete
                         </Button>
                       </div>
@@ -293,25 +341,30 @@ function ClusterLeadersPage() {
                           >
                             {leader.first_name} {leader.last_name}
                           </button>
-                          <div className="text-sm text-gray-500">
-                            📱 {leader.phone}
+                          <div className="text-sm text-gray-500 flex items-center gap-1">
+                            <Phone className="h-3 w-3" />
+                            {leader.phone}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {leader.email ? `📧 ${leader.email}` : '📧 No email'}
+                          <div className="text-sm text-gray-500 flex items-center gap-1">
+                            <Mail className="h-3 w-3" />
+                            {leader.email || 'No email'}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="space-y-1">
                           <div className="font-medium text-green-700">{leader.cluster_name}</div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 flex items-center gap-1">
                             Appointed {leader.year_appointed}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="space-y-1">
-                          <div className="font-medium">{leader.province}</div>
+                          <div className="font-medium flex items-center gap-1">
+                            <MapPin className="h-3 w-3 text-gray-400" />
+                            {leader.province}
+                          </div>
                           <div className="text-sm text-gray-500">{leader.district}</div>
                           {leader.ward && (
                             <div className="text-xs text-gray-400">Ward {leader.ward}</div>
@@ -333,25 +386,28 @@ function ClusterLeadersPage() {
                             variant="outline" 
                             size="sm"
                             onClick={() => navigate(`/cluster-leader/${leader.id}`)}
-                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50 flex items-center gap-1"
                           >
-                            👁️ View
+                            <Eye className="h-4 w-4" />
+                            View
                           </Button>
                           <Button 
                             variant="outline" 
                             size="sm"
                             onClick={() => navigate(`/cluster-leader/${leader.id}/edit`)}
-                            className="text-green-600 border-green-200 hover:bg-green-50"
+                            className="text-green-600 border-green-200 hover:bg-green-50 flex items-center gap-1"
                           >
-                            ✏️ Edit
+                            <Edit className="h-4 w-4" />
+                            Edit
                           </Button>
                           <Button 
                             variant="outline" 
                             size="sm"
                             onClick={() => handleDeleteLeader(leader.id, `${leader.first_name} ${leader.last_name}`)}
-                            className="text-red-600 border-red-200 hover:bg-red-50"
+                            className="text-red-600 border-red-200 hover:bg-red-50 flex items-center gap-1"
                           >
-                            🗑️ Delete
+                            <Trash2 className="h-4 w-4" />
+                            Delete
                           </Button>
                         </div>
                       </td>
@@ -371,8 +427,9 @@ function ClusterLeadersPage() {
                 Showing {filteredLeaders.length} of {leaders.length} cluster leaders
                 {searchTerm && ` (filtered by "${searchTerm}")`}
               </div>
-              <div className="text-xs sm:text-sm">
-                👨‍💼 Active Leaders: {leaders.filter(l => l.status === 'Active').length}
+              <div className="text-xs sm:text-sm flex items-center gap-1">
+                <Shield className="h-4 w-4" />
+                Active Leaders: {leaders.filter(l => l.status === 'Active').length}
               </div>
             </div>
           </div>

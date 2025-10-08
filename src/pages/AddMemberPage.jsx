@@ -2,6 +2,11 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import MemberForm from "@/components/MemberForm"
 import { supabase } from "@/lib/supabase"
+import { 
+  
+  User as UserIcon, 
+  
+} from "lucide-react"
 
 function AddMemberPage() {
   const navigate = useNavigate()
@@ -68,15 +73,15 @@ function AddMemberPage() {
             <h3 className="text-lg font-semibold text-gray-800">Member Registration</h3>
             <p className="text-gray-600 mt-1">Add a new farmer to the database</p>
           </div>
-          <div className="text-3xl">👤</div>
-        </div>
+          <UserIcon className="h-10 w-10 mr-2 text-green-600" />
+          </div>
       </div>
 
       {/* Form Card */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <MemberForm 
           onSubmit={handleAddMember}
-          submitButtonText="Register Member"
+          submitButtonText="Register Member" 
         />
       </div>
     </div>
