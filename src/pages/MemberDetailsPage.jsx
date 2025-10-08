@@ -3,10 +3,23 @@ import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
 import DashboardLayout from "@/components/DashboardLayout"
-import { FileText, FlaskConical, Calendar, User as UserIcon, TrendingUp } from "lucide-react"
-
-
-
+import { 
+  FileText, 
+  FlaskConical, 
+  Calendar, 
+  User as UserIcon, 
+  TrendingUp,
+  Users,
+  Home,
+  Phone,
+  Mail,
+  MapPin,
+  Tractor,
+  FileCheck,
+  Edit,
+  Download,
+  Trash2
+} from "lucide-react"
 
 function MemberDetailsPage() {
   const { id } = useParams()
@@ -66,7 +79,6 @@ function MemberDetailsPage() {
     }
   }
 
-  // ADD THIS FUNCTION HERE - OUTSIDE fetchMember, AT THE SAME LEVEL
   const handleDeleteSample = async (sampleId) => {
     if (!confirm('Are you sure you want to delete this soil sample? This action cannot be undone.')) {
       return
@@ -98,7 +110,6 @@ function MemberDetailsPage() {
     }
   }
 
-
   // Loading component
   const LoadingState = () => (
     <div className="flex items-center justify-center py-12">
@@ -112,21 +123,26 @@ function MemberDetailsPage() {
   // Error component
   const ErrorState = () => (
     <div className="bg-white rounded-lg shadow-md p-8 text-center">
-      <div className="text-6xl mb-4">❌</div>
+      <div className="mb-4">
+        <UserIcon className="h-24 w-24 mx-auto text-red-500" />
+      </div>
       <h2 className="text-2xl font-bold text-red-600 mb-4">Member Not Found</h2>
       <p className="text-gray-600 mb-6">The member you're looking for doesn't exist or may have been deleted.</p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Button 
           onClick={() => navigate(isDashboardMode ? '/dashboard/members' : '/members')}
-          className="bg-green-600 hover:bg-green-700 text-white"
+          className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
         >
-          👥 Back to Members Directory
+          <Users className="h-4 w-4" />
+          Back to Members Directory
         </Button>
         <Button 
           variant="outline"
           onClick={() => navigate(isDashboardMode ? '/dashboard' : '/')}
+          className="flex items-center gap-2"
         >
-          🏠 Go to Dashboard
+          <Home className="h-4 w-4" />
+          Go to Dashboard
         </Button>
       </div>
     </div>
@@ -139,8 +155,8 @@ function MemberDetailsPage() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center space-x-4">
-            <div className="bg-green-100 p-3 rounded-full">
-              <span className="text-2xl">👤</span>
+            <div className="bg-yellow-100 p-3 rounded-full">
+              <UserIcon className="h-8 w-8 text-yellow-600" />
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">
@@ -148,8 +164,16 @@ function MemberDetailsPage() {
               </h1>
               <p className="text-gray-600 mt-1">Member ID: #{member.id}</p>
               <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                <span>📱 {member.mobile_phone_1}</span>
-                {member.email_address && <span>📧 {member.email_address}</span>}
+                <span className="flex items-center gap-1">
+                  <Phone className="h-3 w-3" />
+                  {member.mobile_phone_1}
+                </span>
+                {member.email_address && (
+                  <span className="flex items-center gap-1">
+                    <Mail className="h-3 w-3" />
+                    {member.email_address}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -157,9 +181,10 @@ function MemberDetailsPage() {
           <div className="flex flex-col sm:flex-row gap-3">
             <Button 
               onClick={() => navigate(`/member/${member.id}/edit`)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
             >
-              ✏️ Edit Member
+              <Edit className="h-4 w-4" />
+              Edit Member
             </Button>
             <span className={`px-4 py-2 rounded-full text-sm font-medium text-center ${
               member.contract_status === 'Active' 
@@ -178,7 +203,7 @@ function MemberDetailsPage() {
         {/* Personal Information Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2 flex items-center">
-            <span className="mr-2">👤</span>
+            <UserIcon className="h-5 w-5 mr-2 text-green-600" />
             Personal Information
           </h2>
           <div className="space-y-4">
@@ -222,7 +247,7 @@ function MemberDetailsPage() {
         {/* Location Information Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2 flex items-center">
-            <span className="mr-2">📍</span>
+            <MapPin className="h-5 w-5 mr-2 text-green-600" />
             Location Information
           </h2>
           <div className="space-y-4">
@@ -258,7 +283,7 @@ function MemberDetailsPage() {
         {/* Farm Information Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2 flex items-center">
-            <span className="mr-2">🚜</span>
+            <Tractor className="h-5 w-5 mr-2 text-green-600" />
             Farm Information
           </h2>
           <div className="space-y-4">
@@ -290,7 +315,7 @@ function MemberDetailsPage() {
         {/* Contract Status Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2 flex items-center">
-            <span className="mr-2">📋</span>
+            <FileCheck className="h-5 w-5 mr-2 text-green-600" />
             Membership Status
           </h2>
           <div className="space-y-4">
@@ -319,137 +344,137 @@ function MemberDetailsPage() {
       </div>
 
       {/* Soil Samples Section */}
-      <div className="bg-white rounded-lg shadow-md p-6 col-span-1 lg:col-span-2">
-  <div className="flex justify-between items-center mb-4 border-b pb-3">
-    <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-      <FlaskConical className="h-5 w-5 mr-2 text-green-600" />
-      Soil Sample History
-    </h2>
-    <Button 
-      size="sm"
-      onClick={() => navigate('/add-soil-sample', {
-        state: { memberId: member.id }
-      })}
-      className="bg-green-600 hover:bg-green-700 text-white"
-    >
-      + Add Soil Sample
-    </Button>
-  </div>
-
-  {soilSamples.length === 0 ? (
-    <div className="text-center py-8">
-      <FlaskConical className="h-16 w-16 mx-auto text-gray-300 mb-3" />
-      <p className="text-gray-500 mb-4">No soil samples recorded yet.</p>
-      <Button 
-        size="sm"
-        variant="outline"
-        onClick={() => navigate('/add-soil-sample', {
-          state: { memberId: member.id }
-        })}
-      >
-        Upload First Sample
-      </Button>
-    </div>
-  ) : (
-    <div className="space-y-4">
-      {soilSamples.map((sample) => (
-        <div 
-          key={sample.id} 
-          className="border rounded-lg p-4 hover:bg-gray-50 transition"
-        >
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-            <div className="flex-1 w-full">
-              <div className="flex flex-wrap items-center gap-3 mb-3">
-                <span className="font-medium text-lg flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  {new Date(sample.sample_date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </span>
-                {sample.lab_reference && (
-                  <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    Lab Ref: {sample.lab_reference}
-                  </span>
-                )}
-                {sample.soil_health_rating && (
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
-                    sample.soil_health_rating === 'good' 
-                      ? 'bg-green-100 text-green-800'
-                      : sample.soil_health_rating === 'fair'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    <TrendingUp className="h-3 w-3" />
-                    {sample.soil_health_rating.charAt(0).toUpperCase() + sample.soil_health_rating.slice(1)}
-                  </span>
-                )}
-              </div>
-
-              {(sample.ph_level || sample.lime_recommendation) && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm mb-3 bg-gray-50 p-3 rounded">
-                  {sample.ph_level && (
-                    <div>
-                      <span className="text-gray-600 block text-xs">pH Level</span>
-                      <span className="font-medium text-gray-900">{sample.ph_level}</span>
-                    </div>
-                  )}
-                  {sample.lime_recommendation && (
-                    <div>
-                      <span className="text-gray-600 block text-xs">Lime Needed</span>
-                      <span className="font-medium text-gray-900">{sample.lime_recommendation} kg/ha</span>
-                    </div>
-                  )}
-                  {sample.soil_health_rating && (
-                    <div>
-                      <span className="text-gray-600 block text-xs">Overall Health</span>
-                      <span className="font-medium text-gray-900 capitalize">{sample.soil_health_rating}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {sample.notes && (
-                <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-3">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-medium">Notes:</span> {sample.notes}
-                  </p>
-                </div>
-              )}
-
-              <p className="text-xs text-gray-400 flex items-center gap-1">
-                <UserIcon className="h-3 w-3" />
-                Uploaded {new Date(sample.created_at).toLocaleDateString()} by {sample.uploaded_by || 'Unknown'}
-              </p>
-            </div>
-
-            <div className="flex sm:flex-col gap-2 w-full sm:w-auto">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => window.open(sample.file_url, '_blank')}
-                className="flex-1 sm:flex-none flex items-center gap-2"
-              >
-                <FileText className="h-4 w-4" />
-                View Report
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleDeleteSample(sample.id)}
-                className="flex-1 sm:flex-none text-red-600 hover:text-red-700"
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex justify-between items-center mb-4 border-b pb-3">
+          <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+            <FlaskConical className="h-5 w-5 mr-2 text-green-600" />
+            Soil Sample History
+          </h2>
+          <Button 
+            size="sm"
+            onClick={() => navigate('/add-soil-sample', {
+              state: { memberId: member.id }
+            })}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            + Add Soil Sample
+          </Button>
         </div>
-      ))}
-    </div>
-  )}
-</div>
+
+        {soilSamples.length === 0 ? (
+          <div className="text-center py-8">
+            <FlaskConical className="h-16 w-16 mx-auto text-gray-300 mb-3" />
+            <p className="text-gray-500 mb-4">No soil samples recorded yet.</p>
+            <Button 
+              size="sm"
+              variant="outline"
+              onClick={() => navigate('/add-soil-sample', {
+                state: { memberId: member.id }
+              })}
+            >
+              Upload First Sample
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {soilSamples.map((sample) => (
+              <div 
+                key={sample.id} 
+                className="border rounded-lg p-4 hover:bg-gray-50 transition"
+              >
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                  <div className="flex-1 w-full">
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                      <span className="font-medium text-lg flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-gray-500" />
+                        {new Date(sample.sample_date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </span>
+                      {sample.lab_reference && (
+                        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                          Lab Ref: {sample.lab_reference}
+                        </span>
+                      )}
+                      {sample.soil_health_rating && (
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
+                          sample.soil_health_rating === 'good' 
+                            ? 'bg-green-100 text-green-800'
+                            : sample.soil_health_rating === 'fair'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          <TrendingUp className="h-3 w-3" />
+                          {sample.soil_health_rating.charAt(0).toUpperCase() + sample.soil_health_rating.slice(1)}
+                        </span>
+                      )}
+                    </div>
+
+                    {(sample.ph_level || sample.lime_recommendation) && (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm mb-3 bg-gray-50 p-3 rounded">
+                        {sample.ph_level && (
+                          <div>
+                            <span className="text-gray-600 block text-xs">pH Level</span>
+                            <span className="font-medium text-gray-900">{sample.ph_level}</span>
+                          </div>
+                        )}
+                        {sample.lime_recommendation && (
+                          <div>
+                            <span className="text-gray-600 block text-xs">Lime Needed</span>
+                            <span className="font-medium text-gray-900">{sample.lime_recommendation} kg/ha</span>
+                          </div>
+                        )}
+                        {sample.soil_health_rating && (
+                          <div>
+                            <span className="text-gray-600 block text-xs">Overall Health</span>
+                            <span className="font-medium text-gray-900 capitalize">{sample.soil_health_rating}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {sample.notes && (
+                      <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-3">
+                        <p className="text-sm text-gray-700">
+                          <span className="font-medium">Notes:</span> {sample.notes}
+                        </p>
+                      </div>
+                    )}
+
+                    <p className="text-xs text-gray-400 flex items-center gap-1">
+                      <UserIcon className="h-3 w-3" />
+                      Uploaded {new Date(sample.created_at).toLocaleDateString()} by {sample.uploaded_by || 'Unknown'}
+                    </p>
+                  </div>
+
+                  <div className="flex sm:flex-col gap-2 w-full sm:w-auto">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => window.open(sample.file_url, '_blank')}
+                      className="flex-1 sm:flex-none flex items-center gap-2"
+                    >
+                      <FileText className="h-4 w-4" />
+                      View Report
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleDeleteSample(sample.id)}
+                      className="flex-1 sm:flex-none text-red-600 hover:text-red-700 flex items-center gap-2"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Action Buttons */}
       <div className="bg-white rounded-lg shadow-md p-6">
@@ -458,22 +483,25 @@ function MemberDetailsPage() {
           <Button 
             onClick={() => navigate(isDashboardMode ? '/dashboard/members' : '/members')}
             variant="outline"
-            className="flex-1 sm:flex-none"
+            className="flex-1 sm:flex-none flex items-center gap-2"
           >
-            👥 Back to Directory
+            <Users className="h-4 w-4" />
+            Back to Directory
           </Button>
           <Button 
             onClick={() => navigate(`/member/${member.id}/edit`)}
-            className="bg-blue-600 hover:bg-blue-700 text-white flex-1 sm:flex-none"
+            className="bg-blue-600 hover:bg-blue-700 text-white flex-1 sm:flex-none flex items-center gap-2"
           >
-            ✏️ Edit Details
+            <Edit className="h-4 w-4" />
+            Edit Details
           </Button>
           <Button 
             variant="outline"
             onClick={() => navigate(isDashboardMode ? '/dashboard/export' : '/export')}
-            className="flex-1 sm:flex-none"
+            className="flex-1 sm:flex-none flex items-center gap-2"
           >
-            📄 Export Data
+            <Download className="h-4 w-4" />
+            Export Data
           </Button>
         </div>
       </div>
