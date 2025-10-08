@@ -22,6 +22,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { User, Phone, MapPin, FlaskConical, Calendar, FileText } from "lucide-react"
+
 
 const soilSampleSchema = z.object({
   uploadedBy: z.string().min(1, "Please enter your name"),
@@ -170,10 +172,10 @@ function AddSoilSamplePage() {
             
             {/* Uploader Information */}
             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-              <label className="block text-sm font-medium mb-1 flex items-center">
-                <span className="mr-2">👤</span>
+            <label className="block text-sm font-medium mb-1 flex items-center">
+                <User className="h-4 w-4 mr-2 text-blue-600" />
                 Your Name (Person Uploading) *
-              </label>
+                </label>
               <Input 
                 {...form.register("uploadedBy")}
                 placeholder="Enter your full name"
@@ -190,79 +192,87 @@ function AddSoilSamplePage() {
 
             {/* Member Selection - SEARCHABLE COMBOBOX */}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Select Member *
-              </label>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-full justify-between h-auto min-h-[40px] text-left"
-                  >
-                    {selectedMember ? (
-                      <div className="flex flex-col items-start">
-                        <span className="font-medium">
-                          {selectedMember.first_name} {selectedMember.last_name}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          📱 {selectedMember.mobile_phone_1} • 📍 {selectedMember.province}
-                        </span>
-                      </div>
-                    ) : (
-                      "Search and select a member..."
-                    )}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[500px] p-0" align="start">
-                  <Command>
-                    <CommandInput placeholder="Search by name or phone..." />
-                    <CommandList>
-                      <CommandEmpty>No member found.</CommandEmpty>
-                      <CommandGroup>
-                        {members.map((member) => (
-                          <CommandItem
-                            key={member.id}
-                            value={`${member.first_name} ${member.last_name} ${member.mobile_phone_1}`}
-                            onSelect={() => {
-                              setSelectedMember(member)
-                              form.setValue("memberId", member.id)
-                              form.clearErrors("memberId")
-                              setOpen(false)
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                selectedMember?.id === member.id ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            <div className="flex flex-col">
-                              <span className="font-medium">
-                                {member.first_name} {member.last_name}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                📱 {member.mobile_phone_1} • 📍 {member.province}
-                              </span>
-                            </div>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              {form.formState.errors.memberId && (
-                <p className="text-red-500 text-sm mt-1">
-                  {form.formState.errors.memberId.message}
-                </p>
-              )}
-              <p className="text-xs text-gray-500 mt-1">
-                Type to search by name or phone number
-              </p>
-            </div>
+  <label className="block text-sm font-medium mb-1">
+    Select Member *
+  </label>
+  <Popover open={open} onOpenChange={setOpen}>
+    <PopoverTrigger asChild>
+      <Button
+        variant="outline"
+        role="combobox"
+        aria-expanded={open}
+        className="w-full justify-between h-auto min-h-[40px] text-left"
+      >
+        {selectedMember ? (
+          <div className="flex flex-col items-start">
+            <span className="font-medium">
+              {selectedMember.first_name} {selectedMember.last_name}
+            </span>
+            <span className="text-xs text-gray-500 flex items-center gap-1">
+              <Phone className="h-3 w-3" />
+              {selectedMember.mobile_phone_1}
+              <span className="mx-1">•</span>
+              <MapPin className="h-3 w-3" />
+              {selectedMember.province}
+            </span>
+          </div>
+        ) : (
+          "Search and select a member..."
+        )}
+        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent className="w-[500px] p-0" align="start">
+      <Command>
+        <CommandInput placeholder="Search by name or phone..." />
+        <CommandList>
+          <CommandEmpty>No member found.</CommandEmpty>
+          <CommandGroup>
+            {members.map((member) => (
+              <CommandItem
+                key={member.id}
+                value={`${member.first_name} ${member.last_name} ${member.mobile_phone_1}`}
+                onSelect={() => {
+                  setSelectedMember(member)
+                  form.setValue("memberId", member.id)
+                  form.clearErrors("memberId")
+                  setOpen(false)
+                }}
+              >
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    selectedMember?.id === member.id ? "opacity-100" : "opacity-0"
+                  )}
+                />
+                <div className="flex flex-col">
+                  <span className="font-medium">
+                    {member.first_name} {member.last_name}
+                  </span>
+                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                    <Phone className="h-2 w-2" />
+                    {member.mobile_phone_1}
+                    <span className="mx-1">•</span>
+                    <MapPin className="h-2 w-2" />
+                    {member.province}
+                  </span>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </PopoverContent>
+  </Popover>
+  {form.formState.errors.memberId && (
+    <p className="text-red-500 text-sm mt-1">
+      {form.formState.errors.memberId.message}
+    </p>
+  )}
+  <p className="text-xs text-gray-500 mt-1">
+    Type to search by name or phone number
+  </p>
+</div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Sample Date */}

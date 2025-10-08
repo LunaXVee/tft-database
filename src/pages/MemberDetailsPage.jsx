@@ -3,6 +3,8 @@ import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
 import DashboardLayout from "@/components/DashboardLayout"
+import { FileText, FlaskConical, Calendar, User as UserIcon, TrendingUp } from "lucide-react"
+
 
 
 
@@ -42,20 +44,19 @@ function MemberDetailsPage() {
       console.log("✅ Member details loaded:", data)
       setMember(data)
 
-       
-    // Fetch soil samples for this member
-    const { data: samplesData, error: samplesError } = await supabase
-    .from('soil_samples')
-    .select('*')
-    .eq('member_id', id)
-    .order('sample_date', { ascending: false })
+      // Fetch soil samples for this member
+      const { data: samplesData, error: samplesError } = await supabase
+        .from('soil_samples')
+        .select('*')
+        .eq('member_id', id)
+        .order('sample_date', { ascending: false })
 
-  if (samplesError) {
-    console.error("❌ Error fetching soil samples:", samplesError)
-  } else {
-    console.log("✅ Soil samples loaded:", samplesData)
-    setSoilSamples(samplesData || [])
-  }
+      if (samplesError) {
+        console.error("❌ Error fetching soil samples:", samplesError)
+      } else {
+        console.log("✅ Soil samples loaded:", samplesData)
+        setSoilSamples(samplesData || [])
+      }
       
     } catch (err) {
       console.error("❌ Fetch error:", err)
@@ -63,9 +64,40 @@ function MemberDetailsPage() {
     } finally {
       setLoading(false)
     }
-    
-
   }
+
+  // ADD THIS FUNCTION HERE - OUTSIDE fetchMember, AT THE SAME LEVEL
+  const handleDeleteSample = async (sampleId) => {
+    if (!confirm('Are you sure you want to delete this soil sample? This action cannot be undone.')) {
+      return
+    }
+  
+    try {
+      console.log("🗑️ Deleting soil sample:", sampleId)
+      
+      const { error } = await supabase
+        .from('soil_samples')
+        .delete()
+        .eq('id', sampleId)
+  
+      if (error) {
+        console.error("❌ Delete error:", error)
+        alert("Failed to delete soil sample: " + error.message)
+        return
+      }
+  
+      console.log("✅ Soil sample deleted successfully")
+      alert("Soil sample deleted successfully!")
+      
+      // Refresh the soil samples list
+      setSoilSamples(soilSamples.filter(s => s.id !== sampleId))
+      
+    } catch (err) {
+      console.error("❌ Error:", err)
+      alert("An error occurred while deleting.")
+    }
+  }
+
 
   // Loading component
   const LoadingState = () => (
@@ -142,6 +174,7 @@ function MemberDetailsPage() {
 
       {/* Member Details Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
         {/* Personal Information Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2 flex items-center">
@@ -286,15 +319,15 @@ function MemberDetailsPage() {
       </div>
 
       {/* Soil Samples Section */}
-<div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-lg shadow-md p-6 col-span-1 lg:col-span-2">
   <div className="flex justify-between items-center mb-4 border-b pb-3">
     <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-      <span className="mr-2">🧪</span>
+      <FlaskConical className="h-5 w-5 mr-2 text-green-600" />
       Soil Sample History
     </h2>
     <Button 
       size="sm"
-      onClick={() => navigate(isDashboardMode ? '/dashboard/add-soil-sample' : '/add-soil-sample', {
+      onClick={() => navigate('/add-soil-sample', {
         state: { memberId: member.id }
       })}
       className="bg-green-600 hover:bg-green-700 text-white"
@@ -305,13 +338,12 @@ function MemberDetailsPage() {
 
   {soilSamples.length === 0 ? (
     <div className="text-center py-8">
-      <div className="text-5xl mb-3">📊</div>
-      <p className="text-gray-500">No soil samples recorded yet.</p>
+      <FlaskConical className="h-16 w-16 mx-auto text-gray-300 mb-3" />
+      <p className="text-gray-500 mb-4">No soil samples recorded yet.</p>
       <Button 
         size="sm"
         variant="outline"
-        className="mt-4"
-        onClick={() => navigate(isDashboardMode ? '/dashboard/add-soil-sample' : '/add-soil-sample', {
+        onClick={() => navigate('/add-soil-sample', {
           state: { memberId: member.id }
         })}
       >
@@ -328,8 +360,9 @@ function MemberDetailsPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div className="flex-1 w-full">
               <div className="flex flex-wrap items-center gap-3 mb-3">
-                <span className="font-medium text-lg">
-                  📅 {new Date(sample.sample_date).toLocaleDateString('en-US', {
+                <span className="font-medium text-lg flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  {new Date(sample.sample_date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
@@ -341,38 +374,41 @@ function MemberDetailsPage() {
                   </span>
                 )}
                 {sample.soil_health_rating && (
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
                     sample.soil_health_rating === 'good' 
                       ? 'bg-green-100 text-green-800'
                       : sample.soil_health_rating === 'fair'
                       ? 'bg-yellow-100 text-yellow-800'
                       : 'bg-red-100 text-red-800'
                   }`}>
+                    <TrendingUp className="h-3 w-3" />
                     {sample.soil_health_rating.charAt(0).toUpperCase() + sample.soil_health_rating.slice(1)}
                   </span>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm mb-3 bg-gray-50 p-3 rounded">
-                {sample.ph_level && (
-                  <div>
-                    <span className="text-gray-600 block text-xs">pH Level</span>
-                    <span className="font-medium text-gray-900">{sample.ph_level}</span>
-                  </div>
-                )}
-                {sample.lime_recommendation && (
-                  <div>
-                    <span className="text-gray-600 block text-xs">Lime Needed</span>
-                    <span className="font-medium text-gray-900">{sample.lime_recommendation} kg/ha</span>
-                  </div>
-                )}
-                {sample.soil_health_rating && (
-                  <div>
-                    <span className="text-gray-600 block text-xs">Overall Health</span>
-                    <span className="font-medium text-gray-900 capitalize">{sample.soil_health_rating}</span>
-                  </div>
-                )}
-              </div>
+              {(sample.ph_level || sample.lime_recommendation) && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm mb-3 bg-gray-50 p-3 rounded">
+                  {sample.ph_level && (
+                    <div>
+                      <span className="text-gray-600 block text-xs">pH Level</span>
+                      <span className="font-medium text-gray-900">{sample.ph_level}</span>
+                    </div>
+                  )}
+                  {sample.lime_recommendation && (
+                    <div>
+                      <span className="text-gray-600 block text-xs">Lime Needed</span>
+                      <span className="font-medium text-gray-900">{sample.lime_recommendation} kg/ha</span>
+                    </div>
+                  )}
+                  {sample.soil_health_rating && (
+                    <div>
+                      <span className="text-gray-600 block text-xs">Overall Health</span>
+                      <span className="font-medium text-gray-900 capitalize">{sample.soil_health_rating}</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {sample.notes && (
                 <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-3">
@@ -382,19 +418,32 @@ function MemberDetailsPage() {
                 </div>
               )}
 
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-400 flex items-center gap-1">
+                <UserIcon className="h-3 w-3" />
                 Uploaded {new Date(sample.created_at).toLocaleDateString()} by {sample.uploaded_by || 'Unknown'}
               </p>
             </div>
 
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => window.open(sample.file_url, '_blank')}
-              className="w-full sm:w-auto"
-            >
-              📄 View Report
-            </Button>
+            <div className="flex sm:flex-col gap-2 w-full sm:w-auto">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => window.open(sample.file_url, '_blank')}
+                className="flex-1 sm:flex-none flex items-center gap-2"
+              >
+                <FileText className="h-4 w-4" />
+                View Report
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleDeleteSample(sample.id)}
+                className="flex-1 sm:flex-none text-red-600 hover:text-red-700"
+              >
+                Delete
+              </Button>
+            </div>
           </div>
         </div>
       ))}
